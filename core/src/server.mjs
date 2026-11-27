@@ -10,11 +10,16 @@
 import { createServer } from 'node:http';
 import { WebSocketServer } from 'ws';
 import { db, seed, brainSummary, now } from './db.mjs';
+import { initApiKeys, authenticateApiKey, hasScope, createApiKey, listApiKeys, revokeApiKey } from './api-keys.mjs';
+import { handleMcpHttp } from './mcp-server.mjs';
 
 const PORT = Number(process.env.PORT ?? 4310);
 const API_KEY = process.env.AGENTIC_API_KEY ?? 'dev-key';
+// Where the dashboard frontend lives — GET / redirects browsers here.
+const FRONTEND_URL = process.env.AGENTIC_FRONTEND_URL ?? 'https://agentic-os-ecomexs-projects.vercel.app';
 
 seed();
+initApiKeys(db);
 
 // ---------------------------------------------------------------------------
 // Small query helpers
@@ -245,17 +250,42 @@ const server = createServer(async (req, res) => {
   const path = url.pathname;
   try {
     if (req.method === 'OPTIONS') { res.writeHead(204, { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type, x-api-key', 'access-control-allow-methods': 'GET, POST, OPTIONS' }); return res.end(); }
+    // Root: browsers land on the dashboard; API clients get a status doc.
+    // (Before this, GET / fell through to 404 {"error":"not found"}.)
+    if (req.method === 'GET' && path === '/') {
+      const acceptsHtml = (req.headers.accept ?? '').includes('text/html');
+      if (acceptsHtml) {
+        res.writeHead(302, { location: FRONTEND_URL });
+        return res.end();
+      }
+      return json(res, 200, {
+        ok: true,
+        service: 'agentic-os-core',
+        version: '0.2.0',
+        ts: now(),
+        frontend: FRONTEND_URL,
+        health: '/api/health',
+        state: '/api/state',
+        mcp: '/mcp',
+        keys: '/api/keys',
+        ws: '/ws',
+      });
+    }
     if (req.method === 'GET' && path === '/api/health') return json(res, 200, { ok: true, ts: now() });
     if (req.method === 'GET' && path === '/api/state') return json(res, 200, getState());
 
     if (req.method === 'POST' && path === '/api/events') {
-      if (req.headers['x-api-key'] !== API_KEY) return json(res, 401, { error: 'invalid or missing x-api-key' });
+      const auth = authenticateApiKey(db, req.headers['x-api-key'], API_KEY);
+      if (!auth) return json(res, 401, { error: 'invalid or missing x-api-key' });
+      if (!hasScope(auth, 'events:write')) return json(res, 403, { error: 'insufficient scope: events:write required' });
       const { error, status, event } = handleAdapterEvent(await readBody(req));
       return error ? json(res, status, { error }) : json(res, status, { ok: true, event });
     }
 
     if (req.method === 'POST' && path === '/api/handovers') {
-      if (req.headers['x-api-key'] !== API_KEY) return json(res, 401, { error: 'invalid or missing x-api-key' });
+      const auth = authenticateApiKey(db, req.headers['x-api-key'], API_KEY);
+      if (!auth) return json(res, 401, { error: 'invalid or missing x-api-key' });
+      if (!hasScope(auth, 'handovers:write')) return json(res, 403, { error: 'insufficient scope: handovers:write required' });
       const body = await readBody(req);
       const { title, toAgent, fromAgent = 'Muse', note = '' } = body ?? {};
       if (!title || !toAgent) return json(res, 400, { error: 'title and toAgent required' });
@@ -270,20 +300,56 @@ const server = createServer(async (req, res) => {
 
     const adv = path.match(/^\/api\/handovers\/(\d+)\/advance$/);
     if (req.method === 'POST' && adv) {
-      if (req.headers['x-api-key'] !== API_KEY) return json(res, 401, { error: 'invalid or missing x-api-key' });
+      const auth = authenticateApiKey(db, req.headers['x-api-key'], API_KEY);
+      if (!auth) return json(res, 401, { error: 'invalid or missing x-api-key' });
+      if (!hasScope(auth, 'handovers:write')) return json(res, 403, { error: 'insufficient scope: handovers:write required' });
       const { error, status, handover } = advanceHandover(Number(adv[1]));
       return error ? json(res, status, { error }) : json(res, status, { ok: true, handover });
     }
 
     const chat = path.match(/^\/api\/chat\/([\w-]+)$/);
     if (req.method === 'POST' && chat) {
-      if (req.headers['x-api-key'] !== API_KEY) return json(res, 401, { error: 'invalid or missing x-api-key' });
+      const auth = authenticateApiKey(db, req.headers['x-api-key'], API_KEY);
+      if (!auth) return json(res, 401, { error: 'invalid or missing x-api-key' });
+      if (!hasScope(auth, 'chat:write')) return json(res, 403, { error: 'insufficient scope: chat:write required' });
       const body = await readBody(req);
       const { error, status, reply } = handleChat(chat[1], body?.message);
       return error ? json(res, status, { error }) : json(res, status, { ok: true, reply });
     }
 
-    return json(res, 404, { error: 'not found' });
+    // MCP endpoint — Streamable HTTP (see core/src/mcp-server.mjs).
+    if (req.method === 'POST' && path === '/mcp') {
+      return handleMcpHttp(req, res, { masterKey: API_KEY });
+    }
+
+    // API key management — master key only (keys:manage).
+    if (path === '/api/keys') {
+      const auth = authenticateApiKey(db, req.headers['x-api-key'], API_KEY);
+      if (!auth || auth.kind !== 'master') return json(res, 401, { error: 'master key required' });
+      if (req.method === 'POST') {
+        const body = await readBody(req);
+        try {
+          const created = createApiKey(db, { name: body?.name, scopes: body?.scopes, agentId: body?.agentId ?? null });
+          emit('Muse', 'key.created', { keyId: created.id, name: created.name });
+          return json(res, 201, { ok: true, ...created });
+        } catch (err) {
+          return json(res, 400, { error: String(err?.message ?? err) });
+        }
+      }
+      if (req.method === 'GET') return json(res, 200, { ok: true, keys: listApiKeys(db) });
+      return json(res, 405, { error: 'method not allowed' });
+    }
+
+    const keyDel = path.match(/^\/api\/keys\/(\d+)$/);
+    if (req.method === 'DELETE' && keyDel) {
+      const auth = authenticateApiKey(db, req.headers['x-api-key'], API_KEY);
+      if (!auth || auth.kind !== 'master') return json(res, 401, { error: 'master key required' });
+      const ok = revokeApiKey(db, Number(keyDel[1]));
+      if (ok) emit('Muse', 'key.revoked', { keyId: Number(keyDel[1]) });
+      return ok ? json(res, 200, { ok: true }) : json(res, 404, { error: 'key not found or already revoked' });
+    }
+
+    return json(res, 404, { error: 'not found', hint: 'GET / lists the available endpoints' });
   } catch (err) {
     return json(res, 500, { error: String(err?.message ?? err) });
   }

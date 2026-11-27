@@ -517,6 +517,33 @@ footer{padding:16px 22px 22px;color:var(--muted);font-size:12px;font-weight:600;
     </div>
     <div class="matrix-wrap"><table class="matrix" id="connectMatrix"></table></div>
     <div class="card" style="margin-top:16px">
+      <div class="b" style="font-size:15.5px">API keys — create a connection</div>
+      <p class="small" style="color:var(--soft);font-weight:600;line-height:1.65;margin-top:7px">Create a scoped key for any agent or service. The key is shown <b>once</b> — copy it now, it will never be shown again. Revoke any time.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <input id="newKeyName" type="text" placeholder="Key name — e.g. claude-code-local" style="flex:1;min-width:200px">
+        <button class="btn ghost sm" onclick="createApiKeyUI()">Create key</button>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px" id="newKeyScopes">
+        <label class="small b"><input type="checkbox" value="state:read" checked> state:read</label>
+        <label class="small b"><input type="checkbox" value="events:write" checked> events:write</label>
+        <label class="small b"><input type="checkbox" value="handovers:write"> handovers:write</label>
+        <label class="small b"><input type="checkbox" value="chat:write"> chat:write</label>
+      </div>
+      <div id="newKeyResult" style="margin-top:10px"></div>
+      <div id="apiKeysList" style="margin-top:10px"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="b" style="font-size:15.5px">Connect via MCP</div>
+      <p class="small" style="color:var(--soft);font-weight:600;line-height:1.65;margin-top:7px">Any MCP client can talk to the Core — same tools as the REST API, over the Model Context Protocol.</p>
+      <div class="b" style="margin-top:10px">Local — Claude Code (stdio, no key)</div>
+      <pre id="mcpStdioCmd" style="white-space:pre-wrap">claude mcp add agentic-os -- node /opt/agentic-os/core/src/mcp-server.mjs --stdio</pre>
+      <button class="btn ghost sm" onclick="copyText('mcpStdioCmd')">Copy command</button>
+      <div class="b" style="margin-top:12px">Remote — Claude Desktop / any MCP client (HTTP)</div>
+      <pre id="mcpHttpCfg" style="white-space:pre-wrap">{ "mcpServers": { "agentic-os": { "url": "https://os.ecomex.cloud/mcp", "headers": { "x-api-key": "agk_live_… — paste a key you created above" } } } }</pre>
+      <button class="btn ghost sm" onclick="copyText('mcpHttpCfg')">Copy config</button>
+      <div class="small muted b" id="mcpLiveStatus" style="margin-top:10px">MCP status: checking…</div>
+    </div>
+    <div class="card" style="margin-top:16px">
       <div class="b" style="font-size:15.5px">Fallback rule (set by Jafrul)</div>
       <p class="small" style="color:var(--soft);font-weight:600;line-height:1.65;margin-top:7px">সবগুলো option-ই থাকবে — যেই option-ই available থাকুক, agent যেন easily connect হতে পারে। The ladder tries methods top-down: API → MCP → CLI → webhook → WebSocket → log watcher → file bridge → SSH → browser session → n8n bridge → manual copy-paste. The manual path always works, so a handover can never get stuck.</p>
     </div>
@@ -803,7 +830,8 @@ renderHandovers();
     }).join('') + '</tr>';
   });
   document.getElementById('connectMatrix').innerHTML = html;
-})();
+}
+)();
 
 /* ==================== BRAIN ==================== */
 </script>
@@ -1064,6 +1092,68 @@ function renderConnectLive(st){
   });
   document.getElementById('connectMatrix').innerHTML = html;
 }
+/* ---------- API keys + MCP (P2.5) ---------- */
+function copyText(elId){
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const t = el.innerText || el.textContent || '';
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t);
+}
+function coreKeyReady(){ return CORE.key && CORE.key !== 'YOUR_AGENTIC_API_KEY'; }
+async function loadApiKeys(){
+  const listEl = document.getElementById('apiKeysList');
+  const mcpEl = document.getElementById('mcpLiveStatus');
+  if (!listEl) return;
+  if (!coreKeyReady()){
+    listEl.innerHTML = '<p class="small muted b">Master key not set in this page (CORE.key) — key management works once the page is deployed with the key injected.</p>';
+    if (mcpEl) mcpEl.textContent = 'MCP status: Core reachable — create a key above to connect a remote client.';
+    return;
+  }
+  try {
+    const r = await fetch(CORE.base + '/api/keys', { headers: { 'x-api-key': CORE.key } });
+    if (!r.ok){ listEl.innerHTML = '<p class="small muted b">Could not load keys (HTTP ' + r.status + ').</p>'; return; }
+    const d = await r.json();
+    const keys = d.keys || [];
+    listEl.innerHTML = keys.length ? keys.map(k =>
+      `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 0">
+        <span class="b">${esc(k.name)}</span>
+        <span class="small muted b">${esc(k.key_prefix)}… · ${esc((k.scopes || []).join(', '))}${k.agent_id ? ' · ' + esc(k.agent_id) : ''}</span>
+        <span class="small muted b">${k.revoked ? 'revoked' : 'active'}${k.last_used_at ? ' · last used ' + esc(k.last_used_at.slice(0, 19).replace('T', ' ')) : ' · never used'}</span>
+        ${k.revoked ? '' : `<button class="btn ghost sm" onclick="revokeApiKeyUI(${k.id})">Revoke</button>`}
+      </div>`).join('') : '<p class="small muted b">No keys yet — create the first one above.</p>';
+    if (mcpEl){
+      const live = ((CORE.state && CORE.state.connections) || []).filter(c => c.method === 'MCP' && c.status === 'Connected');
+      mcpEl.textContent = 'MCP status: ' + (live.length ? live.length + ' agent(s) connected via MCP (' + live.map(c => c.agent_id).join(', ') + ')' : 'no agent connected via MCP yet');
+    }
+  } catch (e) {
+    listEl.innerHTML = '<p class="small muted b">Could not reach the Core.</p>';
+  }
+}
+async function createApiKeyUI(){
+  const nameEl = document.getElementById('newKeyName');
+  const resEl = document.getElementById('newKeyResult');
+  const name = (nameEl && nameEl.value || '').trim();
+  if (!name){ if (resEl) resEl.innerHTML = '<p class="small b" style="color:#c0392b">Give the key a name first.</p>'; return; }
+  if (!coreKeyReady()){ if (resEl) resEl.innerHTML = '<p class="small muted b">Master key not set in this page (CORE.key).</p>'; return; }
+  const scopes = Array.from(document.querySelectorAll('#newKeyScopes input[type=checkbox]:checked')).map(c => c.value);
+  try {
+    const r = await fetch(CORE.base + '/api/keys', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': CORE.key }, body: JSON.stringify({ name, scopes }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok){ if (resEl) resEl.innerHTML = '<p class="small b" style="color:#c0392b">Could not create key: ' + esc(d.error || ('HTTP ' + r.status)) + '</p>'; return; }
+    if (resEl) resEl.innerHTML = '<p class="small b">Key created — copy it now, it will never be shown again:</p><pre id="createdKeyPlain" style="white-space:pre-wrap">' + esc(d.key) + '</pre><button class="btn ghost sm" onclick="copyText(\'createdKeyPlain\')">Copy key</button>';
+    if (nameEl) nameEl.value = '';
+    loadApiKeys();
+  } catch (e) {
+    if (resEl) resEl.innerHTML = '<p class="small b" style="color:#c0392b">Could not reach the Core.</p>';
+  }
+}
+async function revokeApiKeyUI(id){
+  if (!coreKeyReady()) return;
+  try {
+    const r = await fetch(CORE.base + '/api/keys/' + id, { method: 'DELETE', headers: { 'x-api-key': CORE.key } });
+    if (r.ok) loadApiKeys();
+  } catch (e) { /* keep list as-is */ }
+}
 function renderBrainLive(st){
   if (st.brain){
     const b = st.brain;
@@ -1132,6 +1222,7 @@ function applyLiveState(st){
   renderProjectsLive(st);
   renderPlansLive(st);
   renderConnectLive(st);
+  loadApiKeys();
   renderBrainLive(st);
   renderFeedLive(st);
   renderHandovers();

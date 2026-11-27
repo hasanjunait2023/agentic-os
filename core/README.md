@@ -42,8 +42,13 @@ AGENTIC_API_KEY='<a long random secret>' npm start
 
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
+| GET | `/` | — | Status doc (JSON) — or redirect to the dashboard in a browser |
 | GET | `/api/health` | — | `{ ok: true }` |
 | GET | `/api/state` | — | Full snapshot: agents, projects, phases, tasks, handovers, connections, knowledge nodes, brain stats, recent events |
+| POST | `/mcp` | `x-api-key` | MCP server (Streamable HTTP): `initialize`, `tools/list`, `tools/call`… |
+| POST | `/api/keys` | master key | Create a scoped API key `{ name, scopes?, agentId? }` — key shown once |
+| GET | `/api/keys` | master key | List keys (masked, no plaintext) |
+| DELETE | `/api/keys/:id` | master key | Revoke a key |
 | POST | `/api/events` | `x-api-key` | Generic Adapter Protocol ingest (below) |
 | POST | `/api/handovers` | — | Create a handover `{ title, toAgent, fromAgent?, note? }` (starts `pending`) |
 | POST | `/api/handovers/:id/advance` | — | Step `pending → sent → accepted → running → completed`. On **accepted**, the linked task's ownership moves to the target agent (a task is created and linked if none exists yet) |

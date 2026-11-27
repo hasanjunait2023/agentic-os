@@ -136,6 +136,7 @@ Jafrul বলবেন (বা UI থেকে click): *"এই কাজটা 
 | **P0 — Plan** | এই master plan + UI prototype | ✅ চলছে (আজ) |
 | **P1 — Prototype UI** | Fullstack dashboard: agents/projects/tasks/handovers CRUD + simulated realtime feed দিয়ে পুরো experience যাচাই | 🔄 আজই build শুরু |
 | **P2 — Real Core** | আসল backend: event store, WebSocket server, Generic Adapter Protocol, Muse-এর আসল data (goals/chats/projects) live feed | ⏭️ Next |
+| **P2.5 — MCP + API keys** | MCP server (stdio + POST /mcp) + Connect page থেকে API key বানানো/revoke + live Connect matrix | 🔄 Design + wire-in চলছে (2026-11-27) |
 | **P3 — External Adapters** | Claude Code, Hermes, Dot Agent — একে একে live adapter | ⏭️ |
 | **P4 — Obsidian Sync** | Jafrul vault দিলে live sync + knowledge graph | ⏭️ vault access পেলে |
 | **P5 — Deploy + Control** | VPS-এ deploy (`os.ecomex.cloud`), সেখান থেকে সত্যিকারের handover/instruction execution | ⏭️ |

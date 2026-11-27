@@ -9,7 +9,7 @@
 // seed() only inserts when the target table is empty.
 
 import { DatabaseSync } from 'node:sqlite';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -17,6 +17,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 export const DB_PATH = join(here, '..', 'data', 'agentic-os.db');
 const BRAIN_STATS_PATH = join(here, '..', '..', 'brain', 'stats.json');
 
+// Fresh clones have no data/ dir yet — SQLite cannot create the file
+// without it, so create the directory first (found during local testing).
+mkdirSync(join(here, '..', 'data'), { recursive: true });
 export const db = new DatabaseSync(DB_PATH);
 
 db.exec(`
