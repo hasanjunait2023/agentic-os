@@ -1,0 +1,12 @@
+node_modules/
+core/data/
+*.db
+*.db-shm
+*.db-wal
+.env
+.env.*
+core/bridge/hub-state.json
+core/bridge/.rows-args.json
+brain/stats.json
+brain/web-graph.json
+.DS_Store

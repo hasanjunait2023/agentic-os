@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentOS — Jafrul's Agentic OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#191919; --muted:#7a7565; --soft:#5c5741; --yellow:#f5c93f; --yellow-soft:#fbe89a;
+  --card:#fffdf4; --card2:#fffef9; --line:#e9e2c8; --dark:#1c1c1c; --green:#2e9e5b; --red:#b3372f;
+  --bg1:#fffef8; --bg2:#fdf6d3; --bg3:#fbefae;
+}
+html,body{height:100%}
+body{
+  font-family:'Noto Serif Bengali',system-ui,-apple-system,sans-serif; color:var(--ink);
+  background:linear-gradient(120deg,var(--bg1) 0%,#fffdf2 30%,var(--bg2) 72%,var(--bg3) 100%);
+  height:100dvh; overflow:hidden;
+}
+#app{display:flex;flex-direction:column;height:100dvh;width:100%}
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 22px 10px;flex:0 0 auto}
+.logo{border:1.5px solid #c9c2a4;border-radius:999px;padding:9px 22px;font-weight:800;font-size:17px;background:rgba(255,255,255,.6);white-space:nowrap}
+.logo span{color:#c9a227}
+nav.main{display:flex;gap:2px;background:rgba(255,255,255,.8);border:1px solid #eee6c6;border-radius:999px;padding:5px;margin:0 auto;flex-wrap:wrap;justify-content:center;max-width:100%}
+nav.main button{border:0;background:transparent;font-family:inherit;color:#3d3a2e;font-size:13.5px;font-weight:700;padding:8px 14px;border-radius:999px;cursor:pointer;transition:.2s;white-space:nowrap}
+nav.main button:hover{background:#f3ecd2}
+nav.main button.active{background:var(--dark);color:#fff}
+.top-actions{display:flex;align-items:center;gap:9px}
+.pill-btn{display:flex;align-items:center;gap:7px;border:1px solid #e3dcc0;background:rgba(255,255,255,.85);border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid #e3dcc0;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#6a5acd,#483d8b);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+/* ---------- pages ---------- */
+main{flex:1 1 auto;overflow:hidden;position:relative}
+.page{display:none;height:100%;overflow-y:auto;padding:8px 22px 30px;scrollbar-width:thin}
+.page.active{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.page-head{margin:10px 0 4px}
+.page-head h1{font-size:30px;font-weight:800;letter-spacing:-.5px}
+.page-head h1.large{font-size:38px}
+.page-sub{color:var(--soft);font-size:13.5px;font-weight:600;margin-top:4px}
+.section-title{font-size:17px;font-weight:800;margin:20px 0 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.section-title small{color:var(--muted);font-weight:600;font-size:12.5px}
+/* ---------- generic ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:20px;box-shadow:0 6px 18px rgba(120,100,20,.05)}
+.card.dark{background:var(--dark);color:#fff;border-color:#000}
+.grid{display:grid;gap:16px}
+.grid.c2{grid-template-columns:repeat(2,1fr)}
+.grid.c3{grid-template-columns:repeat(3,1fr)}
+.grid.c4{grid-template-columns:repeat(4,1fr)}
+.grid.dash{grid-template-columns:1.05fr 1fr 1fr 1fr}
+@media(max-width:1150px){.grid.dash,.grid.c4{grid-template-columns:repeat(2,1fr)}.grid.c3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.grid.dash,.grid.c4,.grid.c3,.grid.c2{grid-template-columns:1fr}.page-head h1.large{font-size:30px}.page{padding:8px 14px 24px}}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fffef6;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--soft)}
+.st{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 auto}
+.st.g{background:var(--green)} .st.y{background:var(--yellow)} .st.gr{background:#b9b294} .st.r{background:var(--red)} .st.b{background:#191919}
+.btn{border:0;border-radius:999px;padding:9px 16px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;transition:.15s}
+.btn.black{background:var(--dark);color:#fff}.btn.black:hover{background:#000}
+.btn.yellow{background:var(--yellow);color:#191919}.btn.yellow:hover{background:#eebd27}
+.btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+.btn.sm{padding:7px 12px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:default}
+.bar{height:9px;border-radius:99px;background:#f0e9cd;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--yellow)}
+.bar>i.black{background:var(--dark)} .bar>i.green{background:var(--green)}
+.segbar{display:flex;height:34px;border-radius:12px;overflow:hidden;font-size:12px;font-weight:800}
+.segbar>div{display:flex;align-items:center;padding:0 12px;white-space:nowrap;overflow:hidden}
+.seg-black{background:var(--dark);color:#fff}.seg-yellow{background:var(--yellow);color:#191919}
+.seg-hatch{background:repeating-linear-gradient(45deg,#f3ecd2 0 6px,#e9e0bd 6px 12px);color:#8a8264}
+.tag{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:3px 9px;background:#f3ecd2;color:#6d6647}
+.tag.black{background:var(--dark);color:#fff}.tag.yellow{background:var(--yellow);color:#191919}.tag.green{background:#dff2e4;color:#1e6b3c}.tag.red{background:#f7e3e1;color:#8c2b25}
+.muted{color:var(--muted)} .small{font-size:12.5px} .b{font-weight:800}
+.progress-num{font-size:34px;font-weight:800;letter-spacing:-1px}
+/* ---------- dashboard ---------- */
+.stats-strip{display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap;margin:16px 0 18px}
+.stats-strip .labels{display:flex;gap:44px;font-size:13px;font-weight:700;color:var(--soft);margin-bottom:6px}
+.segwrap{flex:1 1 340px;min-width:280px}
+.livepill{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 15px;font-size:12px;font-weight:800}
+.output-nums{display:flex;gap:30px;align-items:flex-start}
+.output-nums .num{font-size:34px;font-weight:800;line-height:1}
+.output-nums .lbl{font-size:12.5px;color:var(--muted);font-weight:700;text-align:center;margin-top:3px}
+.orb-card{background:linear-gradient(160deg,#23272e,#14161a);color:#fff;border-radius:26px;padding:20px;position:relative;overflow:hidden;min-height:230px;display:flex;flex-direction:column}
+.orb{width:150px;height:150px;border-radius:50%;margin:auto;background:radial-gradient(circle at 34% 30%,#ffe98a,#f5c93f 45%,#d9a514 78%,#b8860b);box-shadow:0 24px 50px rgba(245,201,63,.35),inset 0 -14px 28px rgba(140,95,0,.35);position:relative}
+.orb::after{content:"";position:absolute;inset:-24px;border:1.5px dashed rgba(255,255,255,.35);border-radius:50%}
+.weekbars{display:flex;align-items:flex-end;gap:9px;height:92px;margin-top:14px}
+.weekbars .wb{flex:1;border-radius:9px 9px 4px 4px;background:#efe7c6;position:relative}
+.weekbars .wb.y{background:var(--yellow)} .weekbars .wb.k{background:var(--dark)}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.timer-btns{display:flex;gap:8px}
+.tbtn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);background:#fff;font-size:14px;cursor:pointer}
+.tbtn.main{background:var(--yellow);border-color:var(--yellow)}
+.feed{list-style:none}
+.feed li{display:flex;gap:11px;padding:9px 0;border-bottom:1px dashed #eee4c0;font-size:13px;align-items:flex-start}
+.feed li:last-child{border-bottom:0}
+.feed .when{margin-left:auto;color:var(--muted);font-size:11.5px;font-weight:700;white-space:nowrap}
+.agent-strip{display:flex;gap:10px;flex-wrap:wrap}
+.agent-mini{flex:1 1 150px;display:flex;gap:10px;align-items:center;background:#fffef6;border:1px solid var(--line);border-radius:18px;padding:11px 13px;font-size:12.5px}
+/* ---------- agents ---------- */
+.agent-card{display:flex;flex-direction:column;gap:10px}
+.agent-top{display:flex;gap:12px;align-items:center}
+.agent-ava{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex:0 0 auto}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:5px 0;border-bottom:1px dashed #f0e8c8}
+.kv:last-of-type{border-bottom:0}.kv b{text-align:right}
+.card-actions{display:flex;gap:8px;margin-top:auto;flex-wrap:wrap}
+/* ---------- team tree ---------- */
+.team-layout{display:grid;grid-template-columns:2.1fr 1fr;gap:16px;align-items:start}
+@media(max-width:1050px){.team-layout{grid-template-columns:1fr}}
+.tree{display:flex;flex-direction:column;align-items:center;padding:8px 4px 4px}
+.tnode{background:#fffef9;border:1.5px solid var(--line);border-radius:20px;padding:13px 16px;text-align:center;min-width:170px;max-width:250px;box-shadow:0 5px 14px rgba(120,100,20,.06);position:relative;z-index:1}
+.tnode .nm{font-weight:800;font-size:14.5px}
+.tnode .rl{font-size:11.5px;color:var(--muted);font-weight:700}
+.tnode.hero{background:var(--dark);color:#fff;border-color:#000;min-width:220px}
+.tnode.hero .rl{color:#d8d2ae}
+.tnode.owner{background:var(--yellow);border-color:#e3b81f}
+.tnode.peer{background:#fbf7e3;border-style:dashed}
+.tnode .doing{font-size:11.5px;margin-top:6px;color:var(--soft);font-weight:600}
+.tnode.hero .doing{color:#e8e2c4}
+.vline{width:2.5px;height:26px;background:#cbbd7f}
+.hrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;width:100%;position:relative}
+.hrow.peers{margin-top:2px}
+.hbar{height:2.5px;background:#cbbd7f;width:min(88%,860px)}
+.branch{display:flex;flex-direction:column;align-items:center;flex:1 1 130px;max-width:200px}
+.branch .vline{height:18px}
+.live-list{list-style:none}
+.live-list li{padding:11px 0;border-bottom:1px dashed #eee4c0;font-size:13px}
+.live-list li:last-child{border-bottom:0}
+.live-list .bar{margin-top:6px}
+/* ---------- chat ---------- */
+.chat-layout{display:grid;grid-template-columns:290px 1fr;gap:16px;height:calc(100dvh - 190px);min-height:430px}
+@media(max-width:860px){.chat-layout{grid-template-columns:1fr;height:auto}.chat-agents{display:flex;overflow-x:auto;gap:8px}.chat-agents .chat-agent{min-width:200px}}
+.chat-agents{display:flex;flex-direction:column;gap:9px;overflow-y:auto}
+.chat-agent{text-align:left;border:1.5px solid var(--line);background:#fffef9;border-radius:20px;padding:13px 14px;cursor:pointer;font-family:inherit;width:100%}
+.chat-agent.active{border-color:var(--dark);background:#fffbe9;box-shadow:0 5px 14px rgba(120,100,20,.1)}
+.chat-agent .nm{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px}
+.chat-agent .last{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-main{display:flex;flex-direction:column;padding:0;overflow:hidden}
+.chat-head{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.chat-body{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:11px;background:linear-gradient(180deg,#fffef9,#fffdf0)}
+.msg{max-width:76%;padding:11px 15px;border-radius:20px;font-size:13.5px;line-height:1.5;font-weight:600}
+.msg.agent{background:#fff;border:1.5px solid var(--line);border-bottom-left-radius:6px;align-self:flex-start}
+.msg.me{background:var(--dark);color:#fff;border-bottom-right-radius:6px;align-self:flex-end}
+.msg .meta{display:block;font-size:10.5px;color:var(--muted);margin-top:5px;font-weight:700}
+.msg.me .meta{color:#c9c2a4}
+.msg.typing{color:var(--muted);font-style:italic}
+.quick-chips{display:flex;gap:8px;padding:11px 20px 0;flex-wrap:wrap}
+.qchip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+.qchip:hover{background:var(--yellow-soft)}
+.chat-input{display:flex;gap:9px;padding:13px 20px 17px}
+.chat-input input{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:12px 18px;font-family:inherit;font-size:13.5px;font-weight:600;background:#fff;outline:none}
+.chat-input input:focus{border-color:var(--yellow)}
+/* ---------- projects / plans ---------- */
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:860px){.kanban{grid-template-columns:1fr}}
+.kcol{background:rgba(255,255,255,.55);border:1px solid var(--line);border-radius:24px;padding:14px}
+.kcol h3{font-size:13.5px;font-weight:800;margin-bottom:10px;display:flex;justify-content:space-between}
+.kcard{background:#fffef9;border:1px solid var(--line);border-radius:17px;padding:12px 13px;margin-bottom:9px;font-size:12.5px}
+.kcard .t{font-weight:800;font-size:13px;margin-bottom:3px}
+.timeline{position:relative;margin-left:8px;padding-left:24px}
+.timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2.5px;background:#e7ddb4;border-radius:2px}
+.tl-item{position:relative;padding:0 0 16px}
+.tl-item::before{content:"";position:absolute;left:-24px;top:3px;width:11px;height:11px;border-radius:50%;background:#ddd3a4;border:2.5px solid #fffdf4}
+.tl-item.done::before{background:var(--green)} .tl-item.active::before{background:var(--yellow);box-shadow:0 0 0 4px rgba(245,201,63,.3)}
+.tl-item .t{font-weight:800;font-size:14px}.tl-item .d{font-size:12.5px;color:var(--soft);font-weight:600}
+/* ---------- handovers ---------- */
+.ho-state{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;border-radius:999px;padding:4px 10px;background:#f3ecd2;color:#6d6647;text-transform:capitalize}
+.ho-state.sent{background:#fdf0bd}.ho-state.accepted{background:#e7eefc;color:#2c4a8a}
+.ho-state.running{background:var(--yellow);color:#191919}.ho-state.completed{background:#dff2e4;color:#1e6b3c}
+.ho-pipe{display:flex;gap:4px;margin-top:9px}
+.ho-pipe i{flex:1;height:6px;border-radius:99px;background:#eee4c0}
+.ho-pipe i.on{background:var(--dark)} .ho-pipe i.on.done{background:var(--green)}
+form.ho-form{display:grid;grid-template-columns:1.4fr 1fr;gap:11px}
+form.ho-form .full{grid-column:1/-1}
+form.ho-form input,form.ho-form select,form.ho-form textarea{width:100%;border:1.5px solid var(--line);border-radius:15px;padding:11px 14px;font-family:inherit;font-size:13px;font-weight:600;background:#fff;outline:none}
+@media(max-width:680px){form.ho-form{grid-template-columns:1fr}}
+/* ---------- connect ---------- */
+.matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:24px;background:var(--card)}
+table.matrix{border-collapse:collapse;width:100%;min-width:760px;font-size:12.5px}
+table.matrix th,table.matrix td{padding:10px 12px;border-bottom:1px solid #f2ebcb;text-align:left;white-space:nowrap}
+table.matrix th{background:#fbf5da;font-size:12px}
+table.matrix tr:last-child td{border-bottom:0}
+.pill-status{font-size:11px;font-weight:800;border-radius:999px;padding:3px 9px;background:#f3ecd2;color:#6d6647}
+.pill-status.ok{background:#dff2e4;color:#1e6b3c}.pill-status.mid{background:#fdf0bd;color:#7a5c00}.pill-status.man{background:#e9e9e9;color:#444}
+/* ---------- brain ---------- */
+.hub-list{list-style:none}
+.hub-list li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #eee4c0;font-size:13px;font-weight:700}
+.hub-list li:last-child{border-bottom:0}
+.proto li{margin:0 0 8px 18px;font-size:13px;font-weight:600;color:var(--soft);line-height:1.55}
+footer{padding:16px 22px 22px;color:var(--muted);font-size:12px;font-weight:600;text-align:center}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="logo">Agent<span>OS</span></div>
+    <nav class="main" id="mainNav">
+      <button data-page="dashboard" class="active">Dashboard</button>
+      <button data-page="agents">Agents</button>
+      <button data-page="team">Team</button>
+      <button data-page="chat">Chat</button>
+      <button data-page="projects">Projects</button>
+      <button data-page="plans">Plans</button>
+      <button data-page="activity">Activity</button>
+      <button data-page="handovers">Handovers</button>
+      <button data-page="connect">Connect</button>
+      <button data-page="brain">Brain</button>
+    </nav>
+    <div class="top-actions">
+      <span class="chip" id="coreBadge" title="Agentic OS Core — os.ecomex.cloud"><span class="st y" id="coreBadgeDot"></span><span id="coreBadgeText">CORE …</span></span>
+      <button class="pill-btn" onclick="showPage('connect')">⚙ Setting</button>
+      <button class="icon-btn" title="Notifications" onclick="showPage('activity')">🔔</button>
+      <div class="avatar" title="Jafrul">J</div>
+    </div>
+  </header>
+  <main id="mainScroll">
+
+  <!-- ================= DASHBOARD ================= -->
+  <section class="page active" id="page-dashboard">
+    <div class="page-head">
+      <h1 class="large">Welcome in, Jafrul</h1>
+      <div class="page-sub">Friday, 27 November 2026 · Asia/Dhaka · All systems under one command center</div>
+    </div>
+    <div class="stats-strip">
+      <div class="segwrap">
+        <div class="labels"><span>Running</span><span>Done</span><span>Queued</span></div>
+        <div class="segbar">
+          <div class="seg-black" id="segRun" style="width:31%">31%</div>
+          <div class="seg-yellow" id="segDone" style="width:46%">46%</div>
+          <div class="seg-hatch" id="segQueue" style="width:23%">23%</div>
+        </div>
+      </div>
+      <span class="livepill" id="dashLivePill"><span class="st g" id="dashLiveDot"></span> <span id="dashLiveText">LIVE · SIM</span></span>
+      <div style="margin-left:auto">
+        <div class="small muted b" style="text-align:right;margin-bottom:5px">Output</div>
+        <div class="output-nums">
+          <div><div class="num" id="outAgents">🤖 4</div><div class="lbl">Agents</div></div>
+          <div><div class="num" id="outTasks">⚡ 13</div><div class="lbl">Tasks</div></div>
+          <div><div class="num" id="outProjects">🗂 3</div><div class="lbl">Projects</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid dash">
+      <div class="orb-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div class="b" style="font-size:16px">Muse · Orchestrator</div><div class="small" style="color:#c9c2a4;font-weight:700">Connected · coordinating the whole team</div></div>
+          <span class="tag yellow">LIVE</span>
+        </div>
+        <div class="orb" aria-hidden="true"></div>
+        <div class="small" style="color:#e8e2c4;font-weight:700">Now: building the full-screen Agentic OS pages · 6 sub-agents under Muse — see the Team page for who is doing what.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="b" style="font-size:16px">Progress</span><button class="tbtn" onclick="showPage('projects')">↗</button></div>
+        <div style="margin-top:12px"><span class="progress-num" id="dashMainPct">55%</span> <span class="muted small b">Solixoo · overall</span></div>
+        <div class="bar" style="margin-top:8px"><i id="dashMainBar" style="width:55%"></i></div>
+        <div class="small muted b" style="margin-top:12px">this week</div>
+        <div class="weekbars">
+          <div class="wb" style="height:38%"></div><div class="wb k" style="height:55%"></div><div class="wb" style="height:47%"></div>
+          <div class="wb y" style="height:82%"></div><div class="wb k" style="height:64%"></div><div class="wb" style="height:52%"></div><div class="wb y" style="height:95%"></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px"><span class="tag yellow">S0 · Redesign</span><span class="tag" id="dashTagIip">IIP 67%</span><span class="tag" id="dashTagOs">Agentic OS 28%</span></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="b" style="font-size:16px">Session tracker</span><button class="tbtn" onclick="showPage('activity')">↗</button></div>
+        <div class="timer-wrap" style="margin-top:8px">
+          <svg width="148" height="148" viewBox="0 0 148 148">
+            <circle cx="74" cy="74" r="62" fill="none" stroke="#f0e9cd" stroke-width="11"/>
+            <circle id="timerRing" cx="74" cy="74" r="62" fill="none" stroke="#f5c93f" stroke-width="11" stroke-linecap="round" stroke-dasharray="389.6" stroke-dashoffset="260" transform="rotate(-90 74 74)"/>
+            <text id="timerText" x="74" y="76" text-anchor="middle" font-size="27" font-weight="800" fill="#191919">02:46</text>
+            <text x="74" y="96" text-anchor="middle" font-size="9.5" font-weight="700" fill="#7a7565">SESSION TIME</text>
+          </svg>
+          <div class="timer-btns">
+            <button class="tbtn" id="timerStop" title="Stop &amp; reset">■</button>
+            <button class="tbtn main" id="timerPlay" title="Play / pause">❚❚</button>
+            <button class="tbtn" id="timerSkip" title="Add a minute">»</button>
+          </div>
+          <div class="small muted b" id="timerState">Timer running · focus session</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="b" style="font-size:16px">Handover</span><span class="progress-num" id="dashHoPct" style="font-size:27px">40%</span></div>
+        <div class="segbar" style="margin-top:12px">
+          <div class="seg-yellow" id="dashHoSent" style="width:40%">Sent 40%</div>
+          <div class="seg-black" id="dashHoAcc" style="width:38%">Accepted 38%</div>
+          <div class="seg-hatch" id="dashHoRest" style="width:22%"></div>
+        </div>
+        <div class="small muted b" style="margin-top:9px">● Sent &nbsp; ● Accepted &nbsp; ● Queued</div>
+        <p class="small" id="dashHoText" style="color:var(--soft);font-weight:600;line-height:1.6;margin-top:9px">Ownership moves on accept — two agents never work the same task at once. 2 of 5 handovers completed.</p>
+        <button class="btn black sm" style="margin-top:11px" onclick="showPage('handovers')">Open Handover board →</button>
+      </div>
+    </div>
+
+    <div class="section-title">Agents right now <small>live status · open the Team page for the full hierarchy</small></div>
+    <div class="agent-strip" id="dashAgentStrip"></div>
+
+    <div class="grid c2" style="margin-top:16px">
+      <div class="card">
+        <div class="b" style="font-size:16px">Activity river <span class="tag" id="dashFeedTag" style="margin-left:6px">LIVE · SIM feed</span></div>
+        <ul class="feed" id="dashFeed" style="margin-top:6px"></ul>
+        <button class="btn ghost sm" style="margin-top:10px" onclick="showPage('activity')">Full activity →</button>
+      </div>
+      <div class="card">
+        <div class="b" style="font-size:16px">Second Brain snapshot</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
+          <span class="chip" id="dashBrainNotes"><span class="st g"></span>1,256 notes</span>
+          <span class="chip" id="dashBrainLinks"><span class="st g"></span>2,851 links</span>
+          <span class="chip" id="dashBrainOrphans"><span class="st y"></span>14 orphans only</span>
+          <span class="chip"><span class="st b"></span>Shared by every agent</span>
+        </div>
+        <p class="small" style="color:var(--soft);font-weight:600;line-height:1.65">One brain for all agents — github.com/hasanjunait2023/second-brain. Biggest hub: <b>hostinger-vps</b> (438 links). Every agent reads it before work and writes back after.</p>
+        <button class="btn black sm" style="margin-top:12px" onclick="showPage('brain')">Open the Brain graph →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AGENTS ================= -->
+  <section class="page" id="page-agents">
+    <div class="page-head"><h1>Agents</h1><div class="page-sub">4 agents · Muse is connected live · chat with any agent or hand a task over</div></div>
+    <div class="grid c2" id="agentCards" style="margin-top:16px"></div>
+    <div class="card" style="margin-top:16px">
+      <div class="b" style="font-size:15.5px">How agents connect</div>
+      <p class="small" style="color:var(--soft);font-weight:600;line-height:1.65;margin-top:7px">Every agent keeps <b>all 11 connection methods</b> as a fallback ladder — REST API, MCP, CLI bridge, webhook, WebSocket, log watcher, file bridge, SSH, browser session, n8n bridge and manual copy-paste. If one method is missing, the next one takes over automatically; no agent is ever blocked. Full matrix on the Connect page.</p>
+      <button class="btn ghost sm" style="margin-top:10px" onclick="showPage('connect')">Open Connect matrix →</button>
+    </div>
+  </section>
+
+  <!-- ================= TEAM ================= -->
+  <section class="page" id="page-team">
+    <div class="page-head"><h1>Team — who works under whom</h1><div class="page-sub">Jafrul → Muse (orchestrator) → Muse's working team · external agents work as peers beside Muse</div></div>
+    <div class="team-layout" style="margin-top:16px">
+      <div class="card">
+        <div class="tree">
+          <div class="tnode owner"><div class="nm">👑 Jafrul</div><div class="rl">Owner · sets direction</div></div>
+          <div class="vline"></div>
+          <div class="hrow peers">
+            <div class="branch"><div class="tnode peer"><div class="nm">Claude Code</div><div class="rl">Peer agent · CLI bridge</div><div class="doing">Standby — Solixoo verification support</div></div></div>
+            <div class="branch"><div class="tnode hero"><div class="nm">🤖 Muse</div><div class="rl">Orchestrator · CONNECTED</div><div class="doing">Coordinating all work below · building Agentic OS v2</div></div></div>
+            <div class="branch"><div class="tnode peer"><div class="nm">Hermes Agent</div><div class="rl">Peer agent · n8n bridge</div><div class="doing">Agent Hub queue · IIP reel review queued</div></div></div>
+            <div class="branch"><div class="tnode peer"><div class="nm">Dot Agent</div><div class="rl">Peer agent · manual / API</div><div class="doing">Research handover accepted</div></div></div>
+          </div>
+          <div class="vline"></div>
+          <div class="hbar"></div>
+          <div class="hrow" id="teamChildren"></div>
+        </div>
+        <p class="small muted b" style="text-align:center;margin-top:12px">Dashed cards = external peer agents · black card = Muse, your connected orchestrator · the six cards below work under Muse</p>
+      </div>
+      <div class="card">
+        <div class="b" style="font-size:16px">Who is doing what — live</div>
+        <ul class="live-list" id="teamLiveList"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAT ================= -->
+  <section class="page" id="page-chat">
+    <div class="page-head"><h1>Chat with your agents</h1><div class="page-sub">Pick an agent on the left and talk to it directly — ask for a status, give it a task, or check what it is working on</div></div>
+    <div class="chat-layout" style="margin-top:14px">
+      <div class="chat-agents" id="chatAgentList"></div>
+      <div class="card chat-main">
+        <div class="chat-head">
+          <span class="st g" id="chatHeadDot"></span>
+          <div><div class="b" id="chatHeadName" style="font-size:16px">Muse</div><div class="small muted b" id="chatHeadStatus">Connected · Orchestrator</div></div>
+          <span class="chip" id="chatModeChip" style="margin-left:auto"><span class="st y" id="chatModeDot"></span><span id="chatModeText">Demo replies — live agent link arrives with the P2 core</span></span>
+        </div>
+        <div class="chat-body" id="chatBody"></div>
+        <div class="quick-chips">
+          <button class="qchip" onclick="quickAsk('Status report')">📊 Status report</button>
+          <button class="qchip" onclick="quickAsk('Give a task')">📌 Give a task</button>
+          <button class="qchip" onclick="quickAsk('What are you working on?')">🛠 What are you working on?</button>
+        </div>
+        <div class="chat-input">
+          <input id="chatText" type="text" placeholder="Message this agent…" autocomplete="off">
+          <button class="btn black" id="chatSend">Send ➤</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROJECTS ================= -->
+  <section class="page" id="page-projects">
+    <div class="page-head"><h1>Projects</h1><div class="page-sub" id="projSub">3 projects · 13 tasks on the board · progress rolls up from phases</div></div>
+    <div class="grid c3" id="projCards" style="margin-top:16px">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="b" style="font-size:16.5px">Solixoo</span><span class="tag yellow">Garments SaaS</span></div>
+        <div style="margin-top:10px"><span class="progress-num">55%</span></div>
+        <div class="bar" style="margin-top:6px"><i style="width:55%"></i></div>
+        <div class="kv"><span class="muted b">Status</span><b>Verification wave running</b></div>
+        <div class="kv"><span class="muted b">Next</span><b>S0 redesign foundation</b></div>
+        <div class="kv"><span class="muted b">Tests</span><b>998 / 998 passing</b></div>
+        <button class="btn ghost sm" style="margin-top:11px" onclick="showPage('plans')">See plan →</button>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="b" style="font-size:16.5px">IIP — Impact Investment PLC</span><span class="tag">Brand reels</span></div>
+        <div style="margin-top:10px"><span class="progress-num">67%</span></div>
+        <div class="bar" style="margin-top:6px"><i style="width:67%"></i></div>
+        <div class="kv"><span class="muted b">Status</span><b>Reel v4 built with HyperFrames</b></div>
+        <div class="kv"><span class="muted b">Next</span><b>Reel series production</b></div>
+        <div class="kv"><span class="muted b">Brand</span><b>Dark green + gold</b></div>
+        <button class="btn ghost sm" style="margin-top:11px" onclick="showPage('plans')">See plan →</button>
+      </div>
+      <div class="card dark">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="b" style="font-size:16.5px">Agentic OS</span><span class="tag yellow">This system</span></div>
+        <div style="margin-top:10px"><span class="progress-num">28%</span></div>
+        <div class="bar" style="margin-top:6px"><i style="width:28%"></i></div>
+        <div class="kv" style="border-color:#3a3a3a"><span style="color:#b9b294" class="b">Status</span><b>Full-screen multi-page UI (v2)</b></div>
+        <div class="kv" style="border-color:#3a3a3a"><span style="color:#b9b294" class="b">Next</span><b>P2 — real WebSocket core</b></div>
+        <div class="kv" style="border-color:#3a3a3a"><span style="color:#b9b294" class="b">Brain</span><b>Connected · 1,256 notes</b></div>
+        <button class="btn yellow sm" style="margin-top:11px" onclick="showPage('plans')">See plan →</button>
+      </div>
+    </div>
+
+    <div class="section-title">Task board <small id="kanbanNote">13 tasks · drag-and-drop arrives with P2</small></div>
+    <div class="kanban" id="kanbanBoard">
+      <div class="kcol"><h3>✅ Done <span class="tag green">6</span></h3>
+        <div class="kcard"><div class="t">Solixoo Fix Wave 2</div><span class="muted b">Solixoo · 990/990 tests</span></div>
+        <div class="kcard"><div class="t">Solixoo Fix Wave 3</div><span class="muted b">Solixoo · 998/998 tests</span></div>
+        <div class="kcard"><div class="t">Second Brain graph pipeline</div><span class="muted b">Agentic OS · 2,851 links parsed</span></div>
+        <div class="kcard"><div class="t">Shared Brain Protocol</div><span class="muted b">Agentic OS · all agents</span></div>
+        <div class="kcard"><div class="t">IIP brand &amp; page analysis</div><span class="muted b">IIP · @iip.invest</span></div>
+        <div class="kcard"><div class="t">Agentic OS master plan (P0)</div><span class="muted b">Agentic OS</span></div>
+      </div>
+      <div class="kcol"><h3>🛠 In progress <span class="tag yellow">4</span></h3>
+        <div class="kcard"><div class="t">Full-screen multi-page OS frontend</div><span class="muted b">Agentic OS · Frontend Builder</span><div class="bar" style="margin-top:7px"><i style="width:70%"></i></div></div>
+        <div class="kcard"><div class="t">Solixoo verification wave</div><span class="muted b">Solixoo · Dev Lead</span><div class="bar" style="margin-top:7px"><i style="width:45%"></i></div></div>
+        <div class="kcard"><div class="t">IIP reel v4 polish</div><span class="muted b">IIP · Video Team</span><div class="bar" style="margin-top:7px"><i style="width:80%"></i></div></div>
+        <div class="kcard"><div class="t">Brain graph in OS Brain view</div><span class="muted b">Agentic OS · Brain Sync</span><div class="bar" style="margin-top:7px"><i style="width:90%"></i></div></div>
+      </div>
+      <div class="kcol"><h3>⏳ Queued / blocked <span class="tag">3</span></h3>
+        <div class="kcard"><div class="t">P2 — real WebSocket core</div><span class="muted b">Agentic OS · after UI approval</span></div>
+        <div class="kcard"><div class="t">S0 redesign foundation (Solixoo)</div><span class="muted b">Solixoo · after verification</span></div>
+        <div class="kcard"><div class="t">Hermes &amp; Dot live adapters (P3)</div><span class="muted b">Agentic OS · needs how-you-run-them info</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PLANS ================= -->
+  <section class="page" id="page-plans">
+    <div class="page-head"><h1>Plans</h1><div class="page-sub" id="planSub">13 phases across 3 projects · done / active / pending at a glance</div></div>
+    <div class="grid c3" id="planCards" style="margin-top:16px">
+      <div class="card"><div class="b" style="font-size:16px">Solixoo — 55%</div><div class="bar" style="margin:9px 0 16px"><i style="width:55%"></i></div>
+        <div class="timeline">
+          <div class="tl-item done"><div class="t">Foundation &amp; core modules</div><div class="d">Done · panels, orders, costing</div></div>
+          <div class="tl-item done"><div class="t">Fix Wave 1</div><div class="d">Done</div></div>
+          <div class="tl-item done"><div class="t">Fix Wave 2</div><div class="d">Done · commit e28fb44 · 990/990 tests</div></div>
+          <div class="tl-item done"><div class="t">Fix Wave 3</div><div class="d">Done · commit af74e31 · 998/998 tests</div></div>
+          <div class="tl-item active"><div class="t">Verification wave</div><div class="d">Active now · independent checks before redesign</div></div>
+          <div class="tl-item"><div class="t">S0 redesign foundation</div><div class="d">Pending · design tokens, light/dark theme, new shell</div></div>
+        </div>
+      </div>
+      <div class="card"><div class="b" style="font-size:16px">IIP — 67%</div><div class="bar" style="margin:9px 0 16px"><i style="width:67%"></i></div>
+        <div class="timeline">
+          <div class="tl-item done"><div class="t">Brand &amp; Facebook page analysis</div><div class="d">Done · @iip.invest · dark green + gold</div></div>
+          <div class="tl-item done"><div class="t">Reference reel study</div><div class="d">Done · reference matched frame by frame</div></div>
+          <div class="tl-item active"><div class="t">Reel v4 — HyperFrames build</div><div class="d">Active · built with the installed skill toolchain</div></div>
+        </div>
+      </div>
+      <div class="card"><div class="b" style="font-size:16px">Agentic OS — 28%</div><div class="bar" style="margin:9px 0 16px"><i style="width:28%"></i></div>
+        <div class="timeline">
+          <div class="tl-item done"><div class="t">P0 — Master plan</div><div class="d">Done · domain model, adapter protocol, phases</div></div>
+          <div class="tl-item done"><div class="t">P1 — Prototype + Second Brain</div><div class="d">Done · Crextio UI, live on Vercel, brain graph connected</div></div>
+          <div class="tl-item active"><div class="t">P1.5 — Full-screen multi-page UI</div><div class="d">Active now · separate page per section, agent chat, team hierarchy</div></div>
+          <div class="tl-item"><div class="t">P2 — Real core</div><div class="d">Pending · WebSocket server, event store, live agent link</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ACTIVITY ================= -->
+  <section class="page" id="page-activity">
+    <div class="page-head"><h1>Activity river</h1><div class="page-sub">Everything happening across agents and projects <span class="tag" id="activityTag" style="margin-left:6px">LIVE · SIM feed — real event stream arrives with P2</span></div></div>
+    <div class="card" style="margin-top:16px"><ul class="feed" id="fullFeed"></ul></div>
+  </section>
+
+  <!-- ================= HANDOVERS ================= -->
+  <section class="page" id="page-handovers">
+    <div class="page-head"><h1>Handover Center</h1><div class="page-sub">Give a task to another agent — ownership moves only when the target accepts, so work is never duplicated</div></div>
+    <div class="grid c2" style="margin-top:16px;align-items:start">
+      <div>
+        <div class="card dark" style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span class="b" style="font-size:16.5px">Handover Tasks</span><span class="progress-num" style="font-size:26px" id="hoCount">2/5</span></div>
+          <p class="small" style="color:#c9c2a4;font-weight:600;line-height:1.6;margin-top:7px">Flow: pending → sent → accepted → running → completed. Advance the next open handover one step at a time.</p>
+          <button class="btn yellow" id="hoAdvance" style="margin-top:13px">Advance next handover →</button>
+          <div class="small b" id="hoMsg" style="color:#fbe89a;margin-top:10px;min-height:17px"></div>
+        </div>
+        <div class="card">
+          <div class="b" style="font-size:16px">Create a handover</div>
+          <form class="ho-form" id="hoForm" style="margin-top:13px">
+            <input id="hoTitle" type="text" placeholder="Task title — e.g. Check the n8n Agent Hub queue" required>
+            <select id="hoAgent">
+              <option value="Hermes Agent">→ Hermes Agent</option>
+              <option value="Claude Code">→ Claude Code</option>
+              <option value="Dot Agent">→ Dot Agent</option>
+              <option value="Muse">→ Muse</option>
+            </select>
+            <textarea id="hoNote" class="full" rows="2" placeholder="Context note for the receiving agent (what, why, done = ?)" required></textarea>
+            <button class="btn black full" type="submit">Create handover</button>
+          </form>
+        </div>
+      </div>
+      <div class="grid" id="hoList" style="gap:13px"></div>
+    </div>
+  </section>
+
+  <!-- ================= CONNECT ================= -->
+  <section class="page" id="page-connect">
+    <div class="page-head"><h1>Connect</h1><div class="page-sub">11 connection methods × 4 agents = 44 paths · automatic fallback — an agent is never blocked by one missing method</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0">
+      <span class="chip"><span class="st g"></span>Muse — connected live</span>
+      <span class="chip"><span class="st g"></span>n8n Agent Hub — verified (66 tools)</span>
+      <span class="chip"><span class="st y"></span>Claude Code — CLI bridge ready</span>
+      <span class="chip"><span class="st y"></span>Hermes — n8n bridge ready</span>
+      <span class="chip"><span class="st gr"></span>Dot Agent — manual path open</span>
+    </div>
+    <div class="matrix-wrap"><table class="matrix" id="connectMatrix"></table></div>
+    <div class="card" style="margin-top:16px">
+      <div class="b" style="font-size:15.5px">Fallback rule (set by Jafrul)</div>
+      <p class="small" style="color:var(--soft);font-weight:600;line-height:1.65;margin-top:7px">সবগুলো option-ই থাকবে — যেই option-ই available থাকুক, agent যেন easily connect হতে পারে। The ladder tries methods top-down: API → MCP → CLI → webhook → WebSocket → log watcher → file bridge → SSH → browser session → n8n bridge → manual copy-paste. The manual path always works, so a handover can never get stuck.</p>
+    </div>
+  </section>
+
+  <!-- ================= BRAIN ================= -->
+  <section class="page" id="page-brain">
+    <div class="page-head"><h1>Second Brain — Graph</h1><div class="page-sub">Shared by every agent · github.com/hasanjunait2023/second-brain · status: CONNECTED · SYNCED</div></div>
+    <div class="card" style="margin-top:14px;padding:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px">
+        <span class="chip" id="brainNotes"><span class="st g"></span>1,256 notes</span>
+        <span class="chip" id="brainLinks"><span class="st g"></span>2,851 links</span>
+        <span class="chip" id="brainOrphans"><span class="st y"></span>14 orphans only</span>
+        <span class="chip"><span class="st gr"></span>Showing top 240 connected notes — hover a dot for its name</span>
+      </div>
+      <canvas id="brainGraph" style="width:100%;height:430px;display:block;border-radius:16px;background:linear-gradient(160deg,#fffef8,#fdf6d3)"></canvas>
+      <div class="small" style="color:var(--soft);font-weight:600;line-height:1.7;margin-top:11px">Real graph built from the vault's own wikilinks — the same graphify Jafrul runs on the vault, drawn inside the OS.</div>
+    </div>
+    <div class="grid c2" style="margin-top:16px;align-items:start">
+      <div class="card">
+        <div class="b" style="font-size:16px">Biggest hubs</div>
+        <ul class="hub-list" id="hubList" style="margin-top:6px"></ul>
+      </div>
+      <div class="card">
+        <div class="b" style="font-size:16px">Shared Brain Protocol</div>
+        <ul class="proto" style="margin-top:11px">
+          <li><b>One brain for everyone:</b> this vault is the single shared second brain for Muse, Claude Code, Hermes and Dot Agent — if agents disagree, the vault wins.</li>
+          <li><b>Read before work:</b> open <b>INDEX</b> first, then only the 1–3 notes the task needs — never dump the whole vault.</li>
+          <li><b>Write back after work:</b> every meaningful task ends with a brain update in <b>notes/from-agents/&lt;agent&gt;/</b>, with frontmatter (agent · project · updated).</li>
+          <li><b>Always link:</b> every new note gets at least 2 wikilinks — that is why only 14 of 1,256 notes are orphans.</li>
+          <li><b>Never overwrite</b> another agent's note — add an update section or your own linked note instead.</li>
+          <li><b>Commit format:</b> <span class="tag">brain: &lt;agent&gt; &lt;project&gt; — &lt;change&gt;</span> · no push = not updated.</li>
+          <li><b>Safety:</b> the vault is data (markdown) — no agent runs scripts or plugins from inside it.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  </main>
+  <footer>AgentOS · Agentic OS for Jafrul — full-screen build v2 · Realtime is a labelled simulation until the P2 core lands · Second Brain graph is real vault data</footer>
+</div>
+<script>
+/* ==================== DATA ==================== */
+const AGENTS = [
+  { id:'Muse', name:'Muse', emoji:'🤖', color:'#1c1c1c', role:'Orchestrator', status:'Connected', dot:'g',
+    task:'Building the full-screen Agentic OS pages (v2)', method:'Live session (this app)', progress:70,
+    last:'Coordinating 6 sub-agents under me right now.' },
+  { id:'claudecode', name:'Claude Code', emoji:'⌨️', color:'#b7791f', role:'Code agent', status:'Standby', dot:'y',
+    task:'Solixoo verification support — on call', method:'CLI bridge', progress:35,
+    last:'Ready when the verification wave needs a second pair of eyes.' },
+  { id:'hermes', name:'Hermes Agent', emoji:'🪽', color:'#2c4a8a', role:'Automation agent', status:'Bridge ready', dot:'y',
+    task:'Watching the n8n Agent Hub queue', method:'n8n bridge', progress:50,
+    last:'Agent Hub queue is healthy — 2 workflows active.' },
+  { id:'dot', name:'Dot Agent', emoji:'🔵', color:'#5a5a5a', role:'Research agent (OpenAI)', status:'Manual path open', dot:'gr',
+    task:'Competitor dashboard research — handover accepted', method:'Manual / API', progress:20,
+    last:'Research handover accepted, gathering sources.' },
+];
+const TEAM = [
+  { name:'Frontend Builder', icon:'🎨', doing:'Building these full-screen OS pages (10 views)', progress:70, state:'Running' },
+  { name:'Brain Sync', icon:'🧠', doing:'Second Brain graph pipeline — graph built & live', progress:100, state:'Done today' },
+  { name:'Solixoo Dev Lead', icon:'👕', doing:'Fix Waves complete — verification wave before S0', progress:55, state:'Running' },
+  { name:'Solixoo Wave Agents', icon:'🌊', doing:'Wave-by-wave fixes & tests (998/998 passing)', progress:100, state:'Done' },
+  { name:'Video Team', icon:'🎬', doing:'IIP reels — v4 built with HyperFrames, polishing', progress:67, state:'Running' },
+  { name:'Research Agent', icon:'🔎', doing:'Reference & market research for plans', progress:40, state:'Running' },
+];
+const FEED = [
+  { icon:'🧠', text:'<b>Brain Sync</b> rebuilt the Second Brain graph — 1,256 notes · 2,851 links', who:'Muse team', when:'just now' },
+  { icon:'🎨', text:'<b>Frontend Builder</b> started the full-screen multi-page OS build', who:'Muse team', when:'2m' },
+  { icon:'✅', text:'<b>Solixoo Fix Wave 3</b> completed — 998/998 tests passing', who:'Solixoo Dev Lead', when:'18m' },
+  { icon:'🤝', text:'Handover <b>accepted</b> — Dot Agent took the dashboard research task', who:'Dot Agent', when:'26m' },
+  { icon:'🎬', text:'<b>Video Team</b> rendered IIP reel v4 with the HyperFrames toolchain', who:'Muse team', when:'41m' },
+  { icon:'🪽', text:'<b>Hermes</b> reported the n8n Agent Hub queue healthy (66 tools)', who:'Hermes Agent', when:'1h' },
+  { icon:'⌨️', text:'<b>Claude Code</b> is on standby for the Solixoo verification wave', who:'Claude Code', when:'1h' },
+  { icon:'🚀', text:'Agentic OS frontend <b>deployed to Vercel</b> and verified live (HTTP 200)', who:'Muse', when:'2h' },
+  { icon:'📋', text:'Master plan updated — Shared Brain Protocol added (§ Brain)', who:'Muse', when:'2h' },
+];
+const HO_STATES = ['pending','sent','accepted','running','completed'];
+let HANDOVERS = [
+  { title:'Verify Solixoo consumption calculator', from:'Muse', to:'Claude Code', note:'Re-check the calculator against Wave 3 fixes before S0.', state:'completed' },
+  { title:'Run n8n Agent Hub health check', from:'Muse', to:'Hermes Agent', note:'Confirm both Agent Hub workflows are active and report tool count.', state:'completed' },
+  { title:'Review IIP reel v4 render', from:'Muse', to:'Hermes Agent', note:'Compare v4 against the reference reel; flag any frame that drifts.', state:'running' },
+  { title:'Research competitor dashboards', from:'Muse', to:'Dot Agent', note:'Collect 5 strong dashboard references with screenshots and notes.', state:'accepted' },
+  { title:'Refresh Brain graph after vault update', from:'Muse', to:'Claude Code', note:'Re-run the graph build after the next vault snapshot lands.', state:'sent' },
+];
+const CONNECT_METHODS = ['REST API + key','MCP','CLI bridge','Webhook','WebSocket','Log watcher','File / folder bridge','SSH','Browser session','n8n bridge','Manual copy-paste'];
+const CONNECT_STATUS = {
+  'Muse':      ['Connected','Connected','Connected','Ready','Planned (P2)','Ready','Connected','Ready','Ready','Connected','Available'],
+  'Claude Code': ['Ready','Ready','Connected','Ready','Planned (P2)','Ready','Ready','Ready','—','Ready','Available'],
+  'Hermes Agent':['Ready','Ready','Ready','Connected','Planned (P2)','Ready','Ready','—','Ready','Connected','Available'],
+  'Dot Agent':   ['Ready','—','—','Ready','Planned (P2)','—','Ready','—','Ready','—','Available'],
+};
+
+/* ==================== NAVIGATION ==================== */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
+  document.querySelectorAll('#mainNav button').forEach(b=>b.classList.toggle('active', b.dataset.page===id));
+  const el=document.getElementById('page-'+id); if(el) el.scrollTop=0;
+  if(id==='brain' && typeof initBrain==='function') initBrain();
+  if(location.hash!=='#'+id) history.replaceState(null,'','#'+id);
+}
+document.querySelectorAll('#mainNav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+
+/* ==================== DASHBOARD ==================== */
+function agentMini(a){
+  return `<div class="agent-mini"><span style="font-size:19px">${a.emoji}</span><div><div class="b">${a.name}</div><div class="muted b" style="font-size:11.5px"><span class="st ${a.dot}"></span> ${a.status}</div></div></div>`;
+}
+document.getElementById('dashAgentStrip').innerHTML = AGENTS.map(agentMini).join('');
+function feedHTML(items){ return items.map(f=>`<li><span style="font-size:16px">${f.icon}</span><div>${f.text}<div class="muted b" style="font-size:11px">${f.who}</div></div><span class="when">${f.when}</span></li>`).join(''); }
+document.getElementById('dashFeed').innerHTML = feedHTML(FEED.slice(0,5));
+document.getElementById('fullFeed').innerHTML = feedHTML(FEED);
+
+/* session timer */
+let timerSec = 166, timerOn = true, timerInt = null;
+const RING_C = 389.6, SESSION_GOAL = 600;
+function fmt(s){ return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
+function drawTimer(){
+  document.getElementById('timerText').textContent = fmt(timerSec);
+  const frac = Math.min(1, timerSec/SESSION_GOAL);
+  document.getElementById('timerRing').style.strokeDashoffset = (RING_C*(1-frac)).toFixed(1);
+  document.getElementById('timerPlay').textContent = timerOn ? '❚❚' : '▶';
+  document.getElementById('timerState').textContent = timerOn ? 'Timer running · focus session' : 'Timer paused';
+}
+function timerTick(){ if(timerOn){ timerSec++; drawTimer(); } }
+timerInt = setInterval(timerTick, 1000); drawTimer();
+document.getElementById('timerPlay').addEventListener('click',()=>{ timerOn=!timerOn; drawTimer(); });
+document.getElementById('timerStop').addEventListener('click',()=>{ timerOn=false; timerSec=0; drawTimer(); document.getElementById('timerState').textContent='Timer reset — press play to start'; });
+document.getElementById('timerSkip').addEventListener('click',()=>{ timerSec+=60; drawTimer(); });
+
+/* ==================== AGENTS PAGE ==================== */
+document.getElementById('agentCards').innerHTML = AGENTS.map(a=>`
+  <div class="card agent-card">
+    <div class="agent-top">
+      <div class="agent-ava" style="background:${a.color}">${a.emoji}</div>
+      <div><div class="b" style="font-size:17px">${a.name}</div><div class="small muted b">${a.role}</div></div>
+      <span class="chip" style="margin-left:auto"><span class="st ${a.dot}"></span>${a.status}</span>
+    </div>
+    <div class="kv"><span class="muted b">Working on</span><b>${a.task}</b></div>
+    <div class="kv"><span class="muted b">Connected via</span><b>${a.method}</b></div>
+    <div><div style="display:flex;justify-content:space-between" class="small b"><span class="muted">Current task progress</span><span>${a.progress}%</span></div>
+    <div class="bar" style="margin-top:5px"><i style="width:${a.progress}%"></i></div></div>
+    <div class="card-actions">
+      <button class="btn black sm" onclick="openChat('${a.id}')">💬 Open chat</button>
+      <button class="btn yellow sm" onclick="giveTask('${a.name}')">📌 Give task (handover)</button>
+      <button class="btn ghost sm" onclick="showPage('team')">Team view</button>
+    </div>
+  </div>`).join('');
+function giveTask(agentName){
+  showPage('handovers');
+  const sel=document.getElementById('hoAgent');
+  [...sel.options].forEach(o=>{ if(o.value===agentName) sel.selectedIndex=o.index; });
+  document.getElementById('hoTitle').focus();
+}
+
+/* ==================== TEAM PAGE ==================== */
+document.getElementById('teamChildren').innerHTML = TEAM.map(t=>`
+  <div class="branch"><div class="vline"></div><div class="tnode">
+    <div class="nm">${t.icon} ${t.name}</div><div class="rl">Under Muse · ${t.state}</div>
+    <div class="doing">${t.doing}</div>
+    <div class="bar" style="margin-top:8px"><i style="width:${t.progress}%"></i></div>
+    <div class="rl" style="margin-top:4px">${t.progress}%</div>
+  </div></div>`).join('');
+document.getElementById('teamLiveList').innerHTML =
+  `<li><b>🤖 Muse</b> <span class="tag yellow">Orchestrator</span><div class="muted b" style="font-size:12px;margin-top:2px">Coordinating the team · building Agentic OS v2</div><div class="bar"><i style="width:70%"></i></div></li>` +
+  TEAM.map(t=>`<li><b>${t.icon} ${t.name}</b> <span class="tag ${t.progress===100?'green':''}">${t.state}</span><div class="muted b" style="font-size:12px;margin-top:2px">${t.doing}</div><div class="bar"><i style="width:${t.progress}%"></i></div></li>`).join('') +
+  AGENTS.slice(1).map(a=>`<li><b>${a.emoji} ${a.name}</b> <span class="tag">Peer</span><div class="muted b" style="font-size:12px;margin-top:2px">${a.task}</div><div class="bar"><i class="black" style="width:${a.progress}%"></i></div></li>`).join('');
+
+/* ==================== CHAT ==================== */
+const CHATS = {
+  Muse: [
+    { from:'agent', text:'Assalamu alaikum, Jafrul. I am coordinating everything from here — the OS frontend build, Solixoo verification and the IIP reel polish are all running under my team right now.' },
+    { from:'agent', text:'Open the Team page any time to see exactly who is doing what under me.' },
+  ],
+  claudecode: [
+    { from:'agent', text:'Claude Code here, connected over the CLI bridge. I am on standby for the Solixoo verification wave — send me a module and I will go through it line by line.' },
+  ],
+  hermes: [
+    { from:'agent', text:'Hermes reporting in via the n8n bridge. Both Agent Hub workflows are active and the queue is healthy.' },
+    { from:'agent', text:'I have the IIP reel v4 review handover in progress — comparing it against the reference now.' },
+  ],
+  dot: [
+    { from:'agent', text:'Dot Agent here. I accepted the competitor-dashboard research handover and I am gathering sources — findings will land in the shared Second Brain.' },
+  ],
+};
+let currentChat = 'Muse';
+function agentById(id){ return AGENTS.find(a=>a.id===id); }
+function renderChatList(){
+  document.getElementById('chatAgentList').innerHTML = AGENTS.map(a=>{
+    const msgs = CHATS[a.id]; const last = msgs[msgs.length-1];
+    return `<button class="chat-agent ${a.id===currentChat?'active':''}" onclick="openChat('${a.id}')">
+      <div class="nm"><span class="st ${a.dot}"></span>${a.emoji} ${a.name}</div>
+      <div class="last">${last ? last.text : ''}</div></button>`;
+  }).join('');
+}
+function renderThread(){
+  const a = agentById(currentChat);
+  document.getElementById('chatHeadName').textContent = a.emoji+' '+a.name;
+  document.getElementById('chatHeadStatus').textContent = a.status+' · '+a.role+' · via '+a.method;
+  document.getElementById('chatHeadDot').className = 'st '+a.dot;
+  const body = document.getElementById('chatBody');
+  body.innerHTML = CHATS[currentChat].map(m=>`<div class="msg ${m.from==='me'?'me':'agent'}">${m.text}<span class="meta">${m.from==='me'?'Jafrul':a.name}</span></div>`).join('');
+  body.scrollTop = body.scrollHeight;
+}
+function openChat(id){ currentChat=id; renderChatList(); renderThread(); showPage('chat'); }
+function agentReply(a, userText){
+  const t = userText.toLowerCase();
+  if(t.includes('status')) return `Status report — ${a.name}: ${a.status}. Current task: "${a.task}" at ${a.progress}%. No blockers on my side. Full detail is on the Agents and Team pages.`;
+  if(t.includes('working on')) return `Right now I am on: "${a.task}" — ${a.progress}% through it. I will post the result to the Activity river and write it back to the shared Second Brain when it lands.`;
+  if(t.includes('task') || t.includes('handover')) return `Got it — I have noted that as a task request. In the live system this becomes a formal handover (pending → sent → accepted → running → completed) so ownership is always clear. For now you can also create it directly on the Handovers page and I will pick it up from there.`;
+  if(t.includes('brain')) return `The shared Second Brain is my memory too — 1,256 notes, 2,851 links. I read INDEX first, then the exact notes I need, and I write back after every meaningful task.`;
+  if(t.includes('hello') || t.includes('hi') || t.includes('salam')) return `Hello Jafrul! ${a.name} here — ${a.status.toLowerCase()}. I am currently on "${a.task}". What would you like me to do?`;
+  return `Received, Jafrul. I am ${a.name} — currently "${a.task}" (${a.progress}%). I have logged your message against that task; in the live P2 link my reply will come from the real agent instead of this demo.`;
+}
+function sendChat(text){
+  const a = agentById(currentChat);
+  CHATS[currentChat].push({ from:'me', text });
+  renderThread(); renderChatList();
+  const body = document.getElementById('chatBody');
+  const typing = document.createElement('div');
+  typing.className='msg agent typing'; typing.textContent = a.name+' is typing…';
+  body.appendChild(typing); body.scrollTop = body.scrollHeight;
+  setTimeout(()=>{
+    typing.remove();
+    CHATS[currentChat].push({ from:'agent', text: agentReply(a, text) });
+    if(currentChat===a.id){ renderThread(); }
+    renderChatList();
+  }, 750);
+}
+function quickAsk(q){ sendChat(q); }
+document.getElementById('chatSend').addEventListener('click',()=>{
+  const inp=document.getElementById('chatText'); const v=inp.value.trim(); if(!v) return; inp.value=''; sendChat(v);
+});
+document.getElementById('chatText').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){ const v=e.target.value.trim(); if(!v) return; e.target.value=''; sendChat(v); }
+});
+renderChatList(); renderThread();
+
+/* ==================== HANDOVERS ==================== */
+function renderHandovers(){
+  const done = HANDOVERS.filter(h=>h.state==='completed').length;
+  document.getElementById('hoCount').textContent = done+'/'+HANDOVERS.length;
+  document.getElementById('hoList').innerHTML = HANDOVERS.map(h=>{
+    const idx = HO_STATES.indexOf(h.state);
+    const pipe = HO_STATES.map((s,i)=>`<i class="${i<=idx?'on':''} ${h.state==='completed'?'done':''}"></i>`).join('');
+    return `<div class="card" style="padding:16px 18px">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+        <div class="b" style="font-size:14.5px">${h.title}</div><span class="ho-state ${h.state}">${h.state}</span>
+      </div>
+      <div class="small muted b" style="margin-top:4px">${h.from} → ${h.to}</div>
+      <p class="small" style="color:var(--soft);font-weight:600;line-height:1.55;margin-top:6px">${h.note}</p>
+      <div class="ho-pipe">${pipe}</div>
+    </div>`;
+  }).join('');
+}
+document.getElementById('hoAdvance').addEventListener('click',()=>{
+  const h = HANDOVERS.find(x=>x.state!=='completed');
+  const msg = document.getElementById('hoMsg');
+  if(!h){ msg.textContent='All handovers are completed 🎉'; return; }
+  const from = h.state;
+  h.state = HO_STATES[HO_STATES.indexOf(h.state)+1];
+  msg.textContent = `“${h.title}” moved ${from} → ${h.state}` + (h.state==='completed' ? ' — ownership closed, task done.' : h.state==='accepted' ? ` — ${h.to} now owns it.` : '');
+  renderHandovers();
+});
+document.getElementById('hoForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const title=document.getElementById('hoTitle').value.trim();
+  const to=document.getElementById('hoAgent').value;
+  const note=document.getElementById('hoNote').value.trim();
+  if(!title||!note) return;
+  HANDOVERS.unshift({ title, from:'Muse', to, note, state:'pending' });
+  document.getElementById('hoMsg').textContent = `New handover created for ${to} — state: pending. Press “Advance next handover” to send it.`;
+  e.target.reset(); renderHandovers();
+});
+renderHandovers();
+
+/* ==================== CONNECT MATRIX ==================== */
+(function(){
+  const agents = ['Muse','Claude Code','Hermes Agent','Dot Agent'];
+  let html = '<tr><th>Method</th>'+agents.map(a=>`<th>${a}</th>`).join('')+'</tr>';
+  CONNECT_METHODS.forEach((m,i)=>{
+    html += `<tr><td class="b">${m}</td>` + agents.map(a=>{
+      const s = CONNECT_STATUS[a][i];
+      const cls = s==='Connected' ? 'ok' : (s==='Available' || s==='—') ? 'man' : 'mid';
+      return `<td><span class="pill-status ${cls}">${s}</span></td>`;
+    }).join('') + '</tr>';
+  });
+  document.getElementById('connectMatrix').innerHTML = html;
+})();
+
+/* ==================== BRAIN ==================== */
+</script>
+<script>
+const GDATA = {"nodes": [{"id": "hostinger-vps", "d": 438, "f": "notes"}, {"id": "_session-hub-c-users-junait-mt5-bot", "d": 224, "f": "notes"}, {"id": "_session-hub-c-users-junait-whatsapp-flow-main", "d": 202, "f": "notes"}, {"id": "INDEX", "d": 197, "f": "(root)"}, {"id": "contabo-vps-stack", "d": 181, "f": "notes"}, {"id": "trading-knowledge-base", "d": 166, "f": "notes"}, {"id": "README", "d": 153, "f": "(root)"}, {"id": "notebooklm-INDEX", "d": 149, "f": "notes"}, {"id": "_session-hub-d-bd-shopify", "d": 145, "f": "notes"}, {"id": "_session-hub-c-users-junait", "d": 105, "f": "notes"}, {"id": "hermes-agents", "d": 92, "f": "notes"}, {"id": "Second_Brain_SOP_2026-06-27", "d": 90, "f": "legacy"}, {"id": "_session-hub-c-users-junait-video-agency", "d": 87, "f": "notes"}, {"id": "GRAPH_REPORT", "d": 86, "f": "legacy"}, {"id": "trading-system-stack-map", "d": 81, "f": "notes"}, {"id": "Total_Plan_2026-06-27", "d": 81, "f": "legacy"}, {"id": "mt5-on-linux-wine-recipe", "d": 73, "f": "notes"}, {"id": "Auto-Save_Controller", "d": 73, "f": "legacy"}, {"id": "trading-books-canon", "d": 66, "f": "notes"}, {"id": "saas-INDEX", "d": 63, "f": "notes"}, {"id": "brain-central-graph", "d": 62, "f": "notes"}, {"id": "_AXIS-MOC", "d": 58, "f": "notes"}, {"id": "agent-company-ceo", "d": 56, "f": "notes"}, {"id": "risk-management-framework", "d": 56, "f": "notes"}, {"id": "Jamal-Trading-Vault", "d": 53, "f": "notes"}, {"id": "jillu-ceo-hub", "d": 53, "f": "notes"}, {"id": "backtesting-methodology", "d": 44, "f": "notes"}, {"id": "trend-and-market-regimes", "d": 39, "f": "notes"}, {"id": "hermes-local-telegram", "d": 37, "f": "notes"}, {"id": "_COMMUNITY_Community 4", "d": 35, "f": "legacy"}, {"id": "_COMMUNITY_Community 2", "d": 35, "f": "legacy"}, {"id": "position-sizing-money-management", "d": 35, "f": "notes"}, {"id": "00-Daily--2026-06-27", "d": 35, "f": "notes"}, {"id": "_COMMUNITY_Community 5", "d": 34, "f": "legacy"}, {"id": "execution-and-slippage", "d": 34, "f": "notes"}, {"id": "OBSIDIAN_SETUP_CONSOLIDATED", "d": 33, "f": "legacy"}, {"id": "overfitting-robustness", "d": 29, "f": "notes"}, {"id": "performance-metrics", "d": 29, "f": "notes"}, {"id": "mt5-python-api", "d": 27, "f": "notes"}, {"id": "smart-money-concepts", "d": 26, "f": "notes"}, {"id": "mt5-strategy-blueprint", "d": 25, "f": "notes"}, {"id": "multi-timeframe-analysis", "d": 25, "f": "notes"}, {"id": "MT5_Accounts_Discovered_2026-06-27", "d": 24, "f": "legacy"}, {"id": "saas-factory-pipeline", "d": 23, "f": "notes"}, {"id": "algo-trading-architecture", "d": 23, "f": "notes"}, {"id": "10-Research--Scalping-20-Strategy-Spec-2026-06-27", "d": 23, "f": "notes"}, {"id": "support-resistance-supply-demand", "d": 22, "f": "notes"}, {"id": "portfolio-correlation", "d": 22, "f": "notes"}, {"id": "_session-hub-d-c-offload-mt5-bot", "d": 22, "f": "notes"}, {"id": "trading-psychology", "d": 20, "f": "notes"}, {"id": "statistical-arbitrage-pairs-trading", "d": 20, "f": "notes"}, {"id": "automation-infra-mapping", "d": 20, "f": "notes"}, {"id": "_COMMUNITY_Community 10", "d": 20, "f": "legacy"}, {"id": "indicator-moving-averages", "d": 20, "f": "notes"}, {"id": "_COMMUNITY_Community 13", "d": 19, "f": "legacy"}, {"id": "strategy-alpha-design", "d": 19, "f": "notes"}, {"id": "_COMMUNITY_Community 12", "d": 19, "f": "legacy"}, {"id": "_COMMUNITY_Community 15", "d": 19, "f": "legacy"}, {"id": "_COMMUNITY_Community 14", "d": 19, "f": "legacy"}, {"id": "chart-patterns", "d": 19, "f": "notes"}, {"id": "indicator-atr", "d": 19, "f": "notes"}, {"id": "trend-following-strategies", "d": 18, "f": "notes"}, {"id": "VPS_SSH_Verified_2026-06-27", "d": 18, "f": "legacy"}, {"id": "health", "d": 18, "f": "(root)"}, {"id": "_COMMUNITY_Community 17", "d": 18, "f": "legacy"}, {"id": "_COMMUNITY_Community 19", "d": 17, "f": "legacy"}, {"id": "_COMMUNITY_Community 21", "d": 17, "f": "legacy"}, {"id": "_COMMUNITY_Community 23", "d": 16, "f": "legacy"}, {"id": "carry-trade-strategies", "d": 16, "f": "notes"}, {"id": "indicator-bollinger-volatility", "d": 16, "f": "notes"}, {"id": "_COMMUNITY_Community 27", "d": 15, "f": "legacy"}, {"id": "swing-trading-strategies", "d": 15, "f": "notes"}, {"id": "_COMMUNITY_Community 25", "d": 15, "f": "legacy"}, {"id": "40-Automation--Brain-Integration-Setup-2026-06-27", "d": 15, "f": "notes"}, {"id": "common-trading-mistakes", "d": 15, "f": "notes"}, {"id": "saas-fundraising-growth-stages", "d": 14, "f": "notes"}, {"id": "work-with-agent-team", "d": 14, "f": "notes"}, {"id": "_COMMUNITY_Community 31", "d": 14, "f": "legacy"}, {"id": "_COMMUNITY_Community 29", "d": 14, "f": "legacy"}, {"id": "trading-plan-template", "d": 14, "f": "notes"}, {"id": "saas-factory", "d": 14, "f": "notes"}, {"id": "_session-hub-c-users-junait-hermes-kanban", "d": 14, "f": "notes"}, {"id": "saas-tech-stack-boilerplates", "d": 14, "f": "notes"}, {"id": "jillu-skills-inventory", "d": 14, "f": "notes"}, {"id": "_COMMUNITY_Community 30", "d": 14, "f": "legacy"}, {"id": "fibonacci-confluence", "d": 14, "f": "notes"}, {"id": "MIGRATION_LOG_2026-06-27", "d": 14, "f": "legacy"}, {"id": "wyckoff-method", "d": 13, "f": "notes"}, {"id": "saas-ai-native-product", "d": 13, "f": "notes"}, {"id": "_session-hub-c-users-junait-claude-code-passive-project-youtube-automation", "d": 13, "f": "notes"}, {"id": "market-profile", "d": 13, "f": "notes"}, {"id": "tradingview-mcp", "d": 12, "f": "notes"}, {"id": "jillu-supabase-junno-stack-2026-06-28", "d": 12, "f": "notes"}, {"id": "00_ECC_Overview", "d": 12, "f": "legacy"}, {"id": "candlestick-patterns", "d": 11, "f": "notes"}, {"id": "Local_Tools_Bridge_2026-06-27", "d": 11, "f": "legacy"}, {"id": "saas-database-postgres", "d": 11, "f": "notes"}, {"id": "saas-validation-mvp", "d": 11, "f": "notes"}, {"id": "saas-api-design", "d": 10, "f": "notes"}, {"id": "forex-market-mechanics", "d": 10, "f": "notes"}, {"id": "jillu-brain-setup-2026-06-28", "d": 10, "f": "notes"}, {"id": "jillu-whatsapp-flow-speed-mask-inventory-purge-2026-07-01", "d": 10, "f": "notes"}, {"id": "tommy-mt5-system", "d": 9, "f": "notes"}, {"id": "00-Daily--2026-06-29", "d": 9, "f": "notes"}, {"id": "00-Daily--2026-07-01", "d": 9, "f": "notes"}, {"id": "00-Daily--2026-07-02", "d": 8, "f": "notes"}, {"id": "opencli-setup", "d": 8, "f": "notes"}, {"id": "jillu-omniroute-deploy-2026-06-30", "d": 8, "f": "notes"}, {"id": "jillu-urgent-container-issues-2026-06-28", "d": 8, "f": "notes"}, {"id": "99-MOCs--MOC----Projects", "d": 8, "f": "notes"}, {"id": "jillu-mission-control-2026-06-28", "d": 7, "f": "notes"}, {"id": "jillu-mt5-bridges-and-services-2026-06-28", "d": 7, "f": "notes"}, {"id": "551c0b55__2026-06-26", "d": 7, "f": "notes"}, {"id": "jillu-monitoring-stack-2026-06-28", "d": 7, "f": "notes"}, {"id": "jillu-siam-elegance-2026-06-28", "d": 6, "f": "notes"}, {"id": "f6d217c5__2026-06-17", "d": 6, "f": "notes"}, {"id": "20-Areas--Agent----RAFSAN-(Creative)", "d": 6, "f": "notes"}, {"id": "aaf848c3__2026-06-24", "d": 6, "f": "notes"}, {"id": "_COMMUNITY_Community 41", "d": 6, "f": "legacy"}, {"id": "d2d55d35__2026-06-25", "d": 5, "f": "notes"}, {"id": "_COMMUNITY_Community 3", "d": 5, "f": "legacy"}, {"id": "c6ec8078__2026-06-22", "d": 5, "f": "notes"}, {"id": "hermes-jamal-memory", "d": 5, "f": "notes"}, {"id": "jillu-cobalt-2026-06-28", "d": 5, "f": "notes"}, {"id": "jillu-whatsapp-flow-301-fix-2026-07-01", "d": 5, "f": "notes"}, {"id": "30-Resources--runbooks--cloudflare-quick-tunnel", "d": 5, "f": "notes"}, {"id": "ed756eb2__2026-06-10", "d": 5, "f": "notes"}, {"id": "05156695__2026-06-04", "d": 4, "f": "notes"}, {"id": "140b1274__2026-06-22", "d": 4, "f": "notes"}, {"id": "56e6ec0d__2026-06-08", "d": 4, "f": "notes"}, {"id": "48f2ef1a__2026-06-22", "d": 4, "f": "notes"}, {"id": "jillu-whatsapp-flow-global-theme-2026-06-30", "d": 4, "f": "notes"}, {"id": "ff8ad8ab__2026-06-04", "d": 4, "f": "notes"}, {"id": "cb73eda6__2026-06-04", "d": 4, "f": "notes"}, {"id": "_COMMUNITY_Community 38", "d": 4, "f": "legacy"}, {"id": "calendar-2026", "d": 4, "f": "notes"}, {"id": "9a6b8c42__2026-06-22", "d": 4, "f": "notes"}, {"id": "10-Projects--Idea----Content-Repurposing-Engine", "d": 4, "f": "notes"}, {"id": "b8479a3b__2026-06-03", "d": 4, "f": "notes"}, {"id": "8a465a42__2026-06-05", "d": 4, "f": "notes"}, {"id": "feba1b78__2026-06-13", "d": 4, "f": "notes"}, {"id": "a08cf56f__2026-06-03", "d": 4, "f": "notes"}, {"id": "04a37665__2026-06-08", "d": 4, "f": "notes"}, {"id": "484af910__2026-06-04", "d": 4, "f": "notes"}, {"id": "d36de3d7__2026-06-11", "d": 4, "f": "notes"}, {"id": "8279fae6__2026-06-03", "d": 4, "f": "notes"}, {"id": "c105ffc3__2026-06-11", "d": 3, "f": "notes"}, {"id": "78f56c0a__2026-06-02", "d": 3, "f": "notes"}, {"id": "d1741f43__2026-06-26", "d": 3, "f": "notes"}, {"id": "82a53c2f__2026-06-07", "d": 3, "f": "notes"}, {"id": "99-MOCs--Dashboard----Knowledge", "d": 3, "f": "notes"}, {"id": "fe696c4d__2026-06-03", "d": 3, "f": "notes"}, {"id": "776e2790__2026-06-03", "d": 3, "f": "notes"}, {"id": "b524c4ea__2026-06-05", "d": 3, "f": "notes"}, {"id": "9affa241__2026-06-08", "d": 3, "f": "notes"}, {"id": "74704196__2026-06-14", "d": 3, "f": "notes"}, {"id": "78a8d9ef__2026-06-03", "d": 3, "f": "notes"}, {"id": "2016a90b__2026-06-11", "d": 3, "f": "notes"}, {"id": "30-Resources--lessons--http-server-detachment-pitfall", "d": 3, "f": "notes"}, {"id": "12a7891a__2026-06-11", "d": 3, "f": "notes"}, {"id": "6c3cb30a__2026-06-01", "d": 3, "f": "notes"}, {"id": "6c0ce0d9__2026-06-14", "d": 3, "f": "notes"}, {"id": "99f322d4__2026-06-10", "d": 3, "f": "notes"}, {"id": "6bf584c6__2026-06-02", "d": 3, "f": "notes"}, {"id": "dce813eb__2026-06-16", "d": 2, "f": "notes"}, {"id": "767cfaf3__2026-06-05", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s5-20260615", "d": 2, "f": "notes"}, {"id": "2026-06-08__b8446e3b", "d": 2, "f": "notes"}, {"id": "2026-05-22__c6ccb492", "d": 2, "f": "notes"}, {"id": "e432db32__2026-06-03", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s5-20260624", "d": 2, "f": "notes"}, {"id": "92a1991f__2026-06-25", "d": 2, "f": "notes"}, {"id": "0b0215ec__2026-06-12", "d": 2, "f": "notes"}, {"id": "65941668__2026-06-14", "d": 2, "f": "notes"}, {"id": "2026-04-21__fa2cd54c", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s4-20260626", "d": 2, "f": "notes"}, {"id": "2026-02-24__9399d568", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-docs-supabase-setup", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-backtest-reports-analysis-ict-2022-gbpusd-20260627-182424", "d": 2, "f": "notes"}, {"id": "4838396e__2026-06-11", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s6-20260619", "d": 2, "f": "notes"}, {"id": "92c873df__2026-06-01", "d": 2, "f": "notes"}, {"id": "3598049a__2026-06-14", "d": 2, "f": "notes"}, {"id": "hermes-elon-musk-soul", "d": 2, "f": "notes"}, {"id": "2026-05-22__cd02b34e", "d": 2, "f": "notes"}, {"id": "f45165e6__2026-06-15", "d": 2, "f": "notes"}, {"id": "30-Resources--lessons--anti-fabrication", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s1-20260525", "d": 2, "f": "notes"}, {"id": "30-Resources--lessons--subagent-fallback-chain", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s1-20260604", "d": 2, "f": "notes"}, {"id": "d893373f__2026-06-04", "d": 2, "f": "notes"}, {"id": "project-template", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s1-20260628", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s4-20260604", "d": 2, "f": "notes"}, {"id": "hermes-unseen-ceo-soul", "d": 2, "f": "notes"}, {"id": "2026-06-07__54b49120", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s6-20260624", "d": 2, "f": "notes"}, {"id": "178ad4a8__2026-06-02", "d": 2, "f": "notes"}, {"id": "896ad737__2026-06-04", "d": 2, "f": "notes"}, {"id": "2026-06-10__16fdcf41", "d": 2, "f": "notes"}, {"id": "15d213d5__2026-06-15", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s5-20260528", "d": 2, "f": "notes"}, {"id": "861a1241__2026-06-13", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-trading-agents-jtcc-strategies-quarantine-s15-pairs-xau-xag", "d": 2, "f": "notes"}, {"id": "e9dbf2d2__2026-06-16", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s6-20260604", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s2-20260626", "d": 2, "f": "notes"}, {"id": "feeaf7c9__2026-06-25", "d": 2, "f": "notes"}, {"id": "1d68943c__2026-06-12", "d": 2, "f": "notes"}, {"id": "f0079138__2026-06-12", "d": 2, "f": "notes"}, {"id": "499a4a12__2026-06-26", "d": 2, "f": "notes"}, {"id": "hermes-jillu-user", "d": 2, "f": "notes"}, {"id": "2a97200c__2026-06-16", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s4-20260624", "d": 2, "f": "notes"}, {"id": "cf859c7c__2026-06-24", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-trading-agents-jtcc-strategies-quarantine-s03-elite-g", "d": 2, "f": "notes"}, {"id": "c7d5ac33__2026-06-01", "d": 2, "f": "notes"}, {"id": "2026-05-22__59d76410", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s4-20260621", "d": 2, "f": "notes"}, {"id": "2026-05-18__db97a591", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s4-20260619", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s4-20260602", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-trading-agents-jtcc-strategies-strategy-template", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-trading-agents-jtcc-strategies-quarantine-s21-killzone-sweep-mss-m3", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-urbanforex-iconic-trader-plan", "d": 2, "f": "notes"}, {"id": "7178ca1d__2026-06-14", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s5-20260607", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s6-20260530", "d": 2, "f": "notes"}, {"id": "hermes-tommy-user", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s5-20260620", "d": 2, "f": "notes"}, {"id": "2026-02-24__a84c3b23", "d": 2, "f": "notes"}, {"id": "hostinger-mt5bot-configs-ea-params-s4-20260614", "d": 2, "f": "notes"}, {"id": "agentwatch-ecosystem", "d": 1, "f": "notes"}, {"id": "unseen-style", "d": 1, "f": "notes"}, {"id": "Hybrid", "d": 1, "f": "notes"}, {"id": "jillu-phase2-redis-pubsub-2026-07-01", "d": 1, "f": "notes"}, {"id": "second-brain", "d": 1, "f": "notes"}, {"id": "30-Resources--Runbook----Auto-Capture-System", "d": 1, "f": "notes"}, {"id": "2026-07-01-session-summary", "d": 1, "f": "notes"}, {"id": "sdists-v9", "d": 1, "f": "notes"}], "edges": [["saas-api-design", "saas-INDEX"], ["_COMMUNITY_Community 2", "Auto-Save_Controller"], ["74704196__2026-06-14", "_session-hub-c-users-junait-whatsapp-flow-main"], ["contabo-vps-stack", "ed756eb2__2026-06-10"], ["00-Daily--2026-06-27", "hermes-agents"], ["risk-management-framework", "statistical-arbitrage-pairs-trading"], ["hermes-agents", "hermes-elon-musk-soul"], ["hermes-agents", "hermes-jillu-user"], ["risk-management-framework", "strategy-alpha-design"], ["f6d217c5__2026-06-17", "mt5-on-linux-wine-recipe"], ["contabo-vps-stack", "jillu-omniroute-deploy-2026-06-30"], ["10-Projects--Idea----Content-Repurposing-Engine", "README"], ["499a4a12__2026-06-26", "_session-hub-c-users-junait"], ["_COMMUNITY_Community 41", "Total_Plan_2026-06-27"], ["risk-management-framework", "trading-psychology"], ["_COMMUNITY_Community 2", "Second_Brain_SOP_2026-06-27"], ["OBSIDIAN_SETUP_CONSOLIDATED", "Second_Brain_SOP_2026-06-27"], ["backtesting-methodology", "mt5-python-api"], ["hostinger-mt5bot-configs-ea-params-s1-20260525", "hostinger-vps"], ["_session-hub-c-users-junait-whatsapp-flow-main", "f0079138__2026-06-12"], ["00-Daily--2026-07-02", "Jamal-Trading-Vault"], ["saas-api-design", "saas-database-postgres"], ["_COMMUNITY_Community 38", "Total_Plan_2026-06-27"], ["portfolio-correlation", "statistical-arbitrage-pairs-trading"], ["6c3cb30a__2026-06-01", "_session-hub-c-users-junait-mt5-bot"], ["jillu-phase2-redis-pubsub-2026-07-01", "README"], ["market-profile", "trading-knowledge-base"], ["mt5-strategy-blueprint", "MT5_Accounts_Discovered_2026-06-27"], ["hostinger-mt5bot-configs-ea-params-s5-20260624", "hostinger-vps"], ["INDEX", "saas-factory-pipeline"], ["00-Daily--2026-06-27", "position-sizing-money-management"], ["brain-central-graph", "README"], ["2026-02-24__9399d568", "notebooklm-INDEX"], ["mt5-strategy-blueprint", "trading-books-canon"], ["3598049a__2026-06-14", "_session-hub-c-users-junait-whatsapp-flow-main"], ["jillu-supabase-junno-stack-2026-06-28", "mt5-on-linux-wine-recipe"], ["_session-hub-d-bd-shopify", "feeaf7c9__2026-06-25"], ["forex-market-mechanics", "mt5-python-api"], ["30-Resources--Runbook----Auto-Capture-System", "README"], ["_session-hub-c-users-junait-mt5-bot", "fe696c4d__2026-06-03"], ["_AXIS-MOC", "brain-central-graph"], ["2026-05-22__59d76410", "notebooklm-INDEX"], ["_session-hub-d-c-offload-mt5-bot", "mt5-strategy-blueprint"], ["jillu-brain-setup-2026-06-28", "README"], ["INDEX", "opencli-setup"], ["INDEX", "sdists-v9"], ["jillu-ceo-hub", "jillu-cobalt-2026-06-28"], ["_COMMUNITY_Community 14", "Second_Brain_SOP_2026-06-27"], ["04a37665__2026-06-08", "_session-hub-c-users-junait"], ["mt5-python-api", "smart-money-concepts"], ["2026-06-07__54b49120", "notebooklm-INDEX"], ["776e2790__2026-06-03", "mt5-on-linux-wine-recipe"], ["2026-05-18__db97a591", "notebooklm-INDEX"], ["common-trading-mistakes", "risk-management-framework"], ["support-resistance-supply-demand", "trading-knowledge-base"], ["_session-hub-c-users-junait-video-agency", "dce813eb__2026-06-16"], ["140b1274__2026-06-22", "contabo-vps-stack"], ["_session-hub-d-bd-shopify", "cf859c7c__2026-06-24"], ["algo-trading-architecture", "mt5-strategy-blueprint"], ["_COMMUNITY_Community 21", "Auto-Save_Controller"], ["hostinger-mt5bot-configs-ea-params-s5-20260607", "hostinger-vps"], ["7178ca1d__2026-06-14", "_session-hub-c-users-junait-whatsapp-flow-main"], ["hostinger-mt5bot-backtest-reports-analysis-ict-2022-gbpusd-20260627-182424", "hostinger-vps"], ["contabo-vps-stack", "saas-fundraising-growth-stages"], ["hostinger-mt5bot-configs-ea-params-s4-20260626", "hostinger-vps"], ["_session-hub-c-users-junait-mt5-bot", "d893373f__2026-06-04"], ["swing-trading-strategies", "trend-and-market-regimes"], ["contabo-vps-stack", "hostinger-vps"], ["896ad737__2026-06-04", "_session-hub-c-users-junait-mt5-bot"], ["a08cf56f__2026-06-03", "contabo-vps-stack"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "Jamal-Trading-Vault"], ["00-Daily--2026-06-29", "hermes-agents"], ["hostinger-mt5bot-configs-ea-params-s5-20260528", "hostinger-vps"], ["cb73eda6__2026-06-04", "mt5-on-linux-wine-recipe"], ["overfitting-robustness", "trading-system-stack-map"], ["30-Resources--lessons--http-server-detachment-pitfall", "README"], ["551c0b55__2026-06-26", "_session-hub-c-users-junait"], ["_COMMUNITY_Community 21", "Second_Brain_SOP_2026-06-27"], ["_COMMUNITY_Community 19", "Auto-Save_Controller"], ["brain-central-graph", "project-template"], ["6c0ce0d9__2026-06-14", "agent-company-ceo"], ["_COMMUNITY_Community 15", "Total_Plan_2026-06-27"], ["hermes-agents", "hermes-unseen-ceo-soul"], ["_COMMUNITY_Community 29", "Auto-Save_Controller"], ["indicator-atr", "trading-system-stack-map"], ["2026-07-01-session-summary", "README"], ["00_ECC_Overview", "_COMMUNITY_Community 19"], ["20-Areas--Agent----RAFSAN-(Creative)", "_AXIS-MOC"], ["65941668__2026-06-14", "_session-hub-c-users-junait-whatsapp-flow-main"], ["hostinger-mt5bot-configs-ea-params-s6-20260530", "hostinger-vps"], ["1d68943c__2026-06-12", "_session-hub-c-users-junait-whatsapp-flow-main"], ["_session-hub-c-users-junait-whatsapp-flow-main", "d36de3d7__2026-06-11"], ["05156695__2026-06-04", "_session-hub-c-users-junait-mt5-bot"], ["15d213d5__2026-06-15", "_session-hub-c-users-junait-video-agency"], ["2026-06-08__b8446e3b", "notebooklm-INDEX"], ["12a7891a__2026-06-11", "contabo-vps-stack"], ["fibonacci-confluence", "trading-system-stack-map"], ["hostinger-mt5bot-trading-agents-jtcc-strategies-strategy-template", "hostinger-vps"], ["00-Daily--2026-07-02", "INDEX"], ["78f56c0a__2026-06-02", "mt5-on-linux-wine-recipe"], ["00-Daily--2026-07-01", "Jamal-Trading-Vault"], ["_COMMUNITY_Community 19", "Second_Brain_SOP_2026-06-27"], ["hostinger-mt5bot-trading-agents-jtcc-strategies-quarantine-s03-elite-g", "hostinger-vps"], ["backtesting-methodology", "chart-patterns"], ["_session-hub-c-users-junait-mt5-bot", "b524c4ea__2026-06-05"], ["99-MOCs--Dashboard----Knowledge", "_AXIS-MOC"], ["hostinger-mt5bot-configs-ea-params-s5-20260615", "hostinger-vps"], ["trading-books-canon", "trend-following-strategies"], ["99f322d4__2026-06-10", "agent-company-ceo"], ["56e6ec0d__2026-06-08", "Jamal-Trading-Vault"], ["contabo-vps-stack", "ff8ad8ab__2026-06-04"], ["_COMMUNITY_Community 5", "Auto-Save_Controller"], ["_COMMUNITY_Community 25", "GRAPH_REPORT"], ["Hybrid", "INDEX"], ["hermes-agents", "hermes-tommy-user"], ["trend-and-market-regimes", "wyckoff-method"], ["hostinger-mt5bot-configs-ea-params-s4-20260624", "hostinger-vps"], ["861a1241__2026-06-13", "_session-hub-c-users-junait"], ["hostinger-mt5bot-configs-ea-params-s6-20260604", "hostinger-vps"], ["2026-02-24__a84c3b23", "notebooklm-INDEX"], ["hostinger-mt5bot-urbanforex-iconic-trader-plan", "hostinger-vps"], ["hostinger-mt5bot-configs-ea-params-s1-20260604", "hostinger-vps"], ["_session-hub-c-users-junait-mt5-bot", "c7d5ac33__2026-06-01"], ["carry-trade-strategies", "forex-market-mechanics"], ["Second_Brain_SOP_2026-06-27", "VPS_SSH_Verified_2026-06-27"], ["9affa241__2026-06-08", "contabo-vps-stack"], ["hermes-local-telegram", "Local_Tools_Bridge_2026-06-27"], ["INDEX", "work-with-agent-team"], ["saas-INDEX", "saas-tech-stack-boilerplates"], ["_session-hub-c-users-junait-whatsapp-flow-main", "c105ffc3__2026-06-11"], ["hostinger-mt5bot-configs-ea-params-s4-20260621", "hostinger-vps"], ["_COMMUNITY_Community 5", "Second_Brain_SOP_2026-06-27"], ["indicator-bollinger-volatility", "trading-knowledge-base"], ["551c0b55__2026-06-26", "agent-company-ceo"], ["0b0215ec__2026-06-12", "_session-hub-c-users-junait-whatsapp-flow-main"], ["4838396e__2026-06-11", "_session-hub-c-users-junait-whatsapp-flow-main"], ["hostinger-mt5bot-configs-ea-params-s6-20260619", "hostinger-vps"], ["backtesting-methodology", "trading-knowledge-base"], ["multi-timeframe-analysis", "trend-following-strategies"], ["_session-hub-c-users-junait-mt5-bot", "e432db32__2026-06-03"], ["jillu-ceo-hub", "jillu-whatsapp-flow-global-theme-2026-06-30"], ["30-Resources--lessons--anti-fabrication", "_AXIS-MOC"], ["40-Automation--Brain-Integration-Setup-2026-06-27", "INDEX"], ["92c873df__2026-06-01", "_session-hub-c-users-junait-mt5-bot"], ["hostinger-mt5bot-configs-ea-params-s1-20260628", "hostinger-vps"], ["_session-hub-d-c-offload-mt5-bot", "c6ec8078__2026-06-22"], ["hostinger-mt5bot-trading-agents-jtcc-strategies-quarantine-s21-killzone-sweep-mss-m3", "hostinger-vps"], ["48f2ef1a__2026-06-22", "_session-hub-d-c-offload-mt5-bot"], ["99-MOCs--MOC----Projects", "_AXIS-MOC"], ["2016a90b__2026-06-11", "_session-hub-c-users-junait-whatsapp-flow-main"], ["2026-05-22__c6ccb492", "notebooklm-INDEX"], ["2a97200c__2026-06-16", "_session-hub-c-users-junait-whatsapp-flow-main"], ["mt5-strategy-blueprint", "trading-plan-template"], ["forex-market-mechanics", "trading-knowledge-base"], ["_COMMUNITY_Community 27", "Total_Plan_2026-06-27"], ["_COMMUNITY_Community 30", "GRAPH_REPORT"], ["hostinger-mt5bot-trading-agents-jtcc-strategies-quarantine-s15-pairs-xau-xag", "hostinger-vps"], ["04a37665__2026-06-08", "hermes-local-telegram"], ["_COMMUNITY_Community 17", "Total_Plan_2026-06-27"], ["30-Resources--lessons--subagent-fallback-chain", "README"], ["78a8d9ef__2026-06-03", "_session-hub-c-users-junait-mt5-bot"], ["_session-hub-c-users-junait", "d2d55d35__2026-06-25"], ["00-Daily--2026-07-01", "INDEX"], ["automation-infra-mapping", "trading-system-stack-map"], ["agentwatch-ecosystem", "INDEX"], ["indicator-atr", "indicator-moving-averages"], ["6bf584c6__2026-06-02", "_session-hub-c-users-junait-mt5-bot"], ["_session-hub-d-bd-shopify", "aaf848c3__2026-06-24"], ["candlestick-patterns", "chart-patterns"], ["INDEX", "unseen-style"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "performance-metrics"], ["contabo-vps-stack", "health"], ["chart-patterns", "trading-knowledge-base"], ["hostinger-mt5bot-configs-ea-params-s4-20260602", "hostinger-vps"], ["8a465a42__2026-06-05", "contabo-vps-stack"], ["fibonacci-confluence", "indicator-moving-averages"], ["mt5-on-linux-wine-recipe", "tradingview-mcp"], ["hostinger-mt5bot-configs-ea-params-s5-20260620", "hostinger-vps"], ["484af910__2026-06-04", "mt5-on-linux-wine-recipe"], ["551c0b55__2026-06-26", "hermes-local-telegram"], ["2026-05-22__cd02b34e", "notebooklm-INDEX"], ["jillu-ceo-hub", "jillu-siam-elegance-2026-06-28"], ["agent-company-ceo", "saas-factory"], ["2026-06-10__16fdcf41", "notebooklm-INDEX"], ["_COMMUNITY_Community 23", "Auto-Save_Controller"], ["178ad4a8__2026-06-02", "_session-hub-c-users-junait-mt5-bot"], ["92a1991f__2026-06-25", "_session-hub-d-bd-shopify"], ["8279fae6__2026-06-03", "_session-hub-c-users-junait-mt5-bot"], ["algo-trading-architecture", "trading-system-stack-map"], ["hermes-agents", "hermes-jamal-memory"], ["hostinger-mt5bot-configs-ea-params-s6-20260624", "hostinger-vps"], ["_session-hub-c-users-junait-hermes-kanban", "INDEX"], ["_session-hub-c-users-junait", "d1741f43__2026-06-26"], ["jillu-monitoring-stack-2026-06-28", "jillu-supabase-junno-stack-2026-06-28"], ["_COMMUNITY_Community 31", "GRAPH_REPORT"], ["_COMMUNITY_Community 10", "Auto-Save_Controller"], ["Jamal-Trading-Vault", "jillu-mt5-bridges-and-services-2026-06-28"], ["mt5-strategy-blueprint", "risk-management-framework"], ["99f322d4__2026-06-10", "_session-hub-c-users-junait-claude-code-passive-project-youtube-automation"], ["_COMMUNITY_Community 13", "GRAPH_REPORT"], ["30-Resources--runbooks--cloudflare-quick-tunnel", "_AXIS-MOC"], ["brain-central-graph", "jillu-skills-inventory"], ["_COMMUNITY_Community 3", "Auto-Save_Controller"], ["indicator-moving-averages", "swing-trading-strategies"], ["INDEX", "MIGRATION_LOG_2026-06-27"], ["_COMMUNITY_Community 14", "MT5_Accounts_Discovered_2026-06-27"], ["hostinger-mt5bot-docs-supabase-setup", "hostinger-vps"], ["hostinger-mt5bot-configs-ea-params-s2-20260626", "hostinger-vps"], ["trading-knowledge-base", "trading-plan-template"], ["indicator-bollinger-volatility", "statistical-arbitrage-pairs-trading"], ["feba1b78__2026-06-13", "mt5-on-linux-wine-recipe"], ["9a6b8c42__2026-06-22", "contabo-vps-stack"], ["82a53c2f__2026-06-07", "_session-hub-c-users-junait"], ["INDEX", "second-brain"], ["jillu-whatsapp-flow-speed-mask-inventory-purge-2026-07-01", "README"], ["_session-hub-c-users-junait-video-agency", "f45165e6__2026-06-15"], ["_COMMUNITY_Community 12", "Auto-Save_Controller"], ["b8479a3b__2026-06-03", "hermes-local-telegram"], ["jillu-supabase-junno-stack-2026-06-28", "jillu-urgent-container-issues-2026-06-28"], ["saas-ai-native-product", "saas-tech-stack-boilerplates"], ["hostinger-mt5bot-configs-ea-params-s4-20260619", "hostinger-vps"], ["jillu-mission-control-2026-06-28", "jillu-supabase-junno-stack-2026-06-28"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "smart-money-concepts"], ["saas-INDEX", "saas-validation-mvp"], ["767cfaf3__2026-06-05", "_session-hub-c-users-junait"], ["Jamal-Trading-Vault", "tommy-mt5-system"], ["_COMMUNITY_Community 3", "Second_Brain_SOP_2026-06-27"], ["indicator-moving-averages", "trading-system-stack-map"], ["jillu-whatsapp-flow-301-fix-2026-07-01", "README"], ["calendar-2026", "INDEX"], ["execution-and-slippage", "trading-books-canon"], ["hostinger-mt5bot-configs-ea-params-s4-20260614", "hostinger-vps"], ["2026-04-21__fa2cd54c", "notebooklm-INDEX"], ["_session-hub-c-users-junait-video-agency", "e9dbf2d2__2026-06-16"], ["_COMMUNITY_Community 41", "Auto-Save_Controller"], ["hostinger-mt5bot-configs-ea-params-s4-20260604", "hostinger-vps"], ["jillu-ceo-hub", "jillu-skills-inventory"], ["contabo-vps-stack", "MT5_Accounts_Discovered_2026-06-27"], ["_COMMUNITY_Community 38", "Auto-Save_Controller"], ["overfitting-robustness", "trend-following-strategies"], ["_COMMUNITY_Community 41", "Second_Brain_SOP_2026-06-27"], ["indicator-atr", "trend-following-strategies"], ["_session-hub-c-users-junait-whatsapp-flow-main", "health"], ["Auto-Save_Controller", "brain-central-graph"], ["_COMMUNITY_Community 38", "Second_Brain_SOP_2026-06-27"], ["99-MOCs--Dashboard----Knowledge", "README"], ["_COMMUNITY_Community 4", "GRAPH_REPORT"], ["trading-books-canon", "trend-and-market-regimes"], ["_session-hub-c-users-junait", "feba1b78__2026-06-13"], ["automation-infra-mapping", "Jamal-Trading-Vault"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "position-sizing-money-management"], ["_session-hub-d-c-offload-mt5-bot", "Jamal-Trading-Vault"], ["overfitting-robustness", "performance-metrics"], ["_COMMUNITY_Community 15", "Auto-Save_Controller"], ["fibonacci-confluence", "support-resistance-supply-demand"], ["smart-money-concepts", "trading-plan-template"], ["algo-trading-architecture", "Jamal-Trading-Vault"], ["30-Resources--lessons--anti-fabrication", "README"], ["mt5-python-api", "risk-management-framework"], ["_COMMUNITY_Community 15", "Second_Brain_SOP_2026-06-27"], ["99-MOCs--MOC----Projects", "README"], ["position-sizing-money-management", "trading-books-canon"], ["Jamal-Trading-Vault", "trading-knowledge-base"], ["jillu-ceo-hub", "jillu-supabase-junno-stack-2026-06-28"], ["f6d217c5__2026-06-17", "trading-knowledge-base"], ["_session-hub-c-users-junait-video-agency", "INDEX"], ["common-trading-mistakes", "strategy-alpha-design"], ["_COMMUNITY_Community 27", "Auto-Save_Controller"], ["fibonacci-confluence", "smart-money-concepts"], ["_COMMUNITY_Community 17", "Auto-Save_Controller"], ["mt5-python-api", "mt5-strategy-blueprint"], ["brain-central-graph", "jillu-ceo-hub"], ["_COMMUNITY_Community 17", "Second_Brain_SOP_2026-06-27"], ["jillu-brain-setup-2026-06-28", "jillu-ceo-hub"], ["INDEX", "jillu-brain-setup-2026-06-28"], ["contabo-vps-stack", "jillu-siam-elegance-2026-06-28"], ["performance-metrics", "trading-books-canon"], ["mt5-strategy-blueprint", "trading-system-stack-map"], ["contabo-vps-stack", "saas-tech-stack-boilerplates"], ["execution-and-slippage", "risk-management-framework"], ["indicator-moving-averages", "trend-following-strategies"], ["algo-trading-architecture", "performance-metrics"], ["indicator-atr", "position-sizing-money-management"], ["indicator-atr", "trend-and-market-regimes"], ["position-sizing-money-management", "trading-plan-template"], ["brain-central-graph", "contabo-vps-stack"], ["20-Areas--Agent----RAFSAN-(Creative)", "brain-central-graph"], ["contabo-vps-stack", "jillu-skills-inventory"], ["algo-trading-architecture", "execution-and-slippage"], ["statistical-arbitrage-pairs-trading", "trading-knowledge-base"], ["multi-timeframe-analysis", "portfolio-correlation"], ["swing-trading-strategies", "trading-knowledge-base"], ["trading-knowledge-base", "trading-system-stack-map"], ["contabo-vps-stack", "d2d55d35__2026-06-25"], ["brain-central-graph", "saas-INDEX"], ["8a465a42__2026-06-05", "_session-hub-c-users-junait-mt5-bot"], ["trading-system-stack-map", "trend-and-market-regimes"], ["position-sizing-money-management", "risk-management-framework"], ["551c0b55__2026-06-26", "brain-central-graph"], ["health", "hermes-agents"], ["mt5-python-api", "trading-system-stack-map"], ["_session-hub-c-users-junait-mt5-bot", "trading-knowledge-base"], ["backtesting-methodology", "trading-books-canon"], ["algo-trading-architecture", "position-sizing-money-management"], ["00-Daily--2026-06-27", "statistical-arbitrage-pairs-trading"], ["fibonacci-confluence", "multi-timeframe-analysis"], ["saas-ai-native-product", "saas-INDEX"], ["contabo-vps-stack", "jillu-supabase-junno-stack-2026-06-28"], ["00-Daily--2026-06-27", "Jamal-Trading-Vault"], ["smart-money-concepts", "trading-system-stack-map"], ["brain-central-graph", "saas-fundraising-growth-stages"], ["hermes-agents", "tommy-mt5-system"], ["performance-metrics", "risk-management-framework"], ["chart-patterns", "trading-books-canon"], ["c6ec8078__2026-06-22", "Jamal-Trading-Vault"], ["jillu-urgent-container-issues-2026-06-28", "README"], ["indicator-moving-averages", "trend-and-market-regimes"], ["common-trading-mistakes", "position-sizing-money-management"], ["mt5-on-linux-wine-recipe", "mt5-python-api"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "wyckoff-method"], ["execution-and-slippage", "trading-system-stack-map"], ["contabo-vps-stack", "feba1b78__2026-06-13"], ["mt5-on-linux-wine-recipe", "tommy-mt5-system"], ["candlestick-patterns", "trading-books-canon"], ["agent-company-ceo", "saas-factory-pipeline"], ["health", "mt5-on-linux-wine-recipe"], ["contabo-vps-stack", "trading-system-stack-map"], ["agent-company-ceo", "ed756eb2__2026-06-10"], ["carry-trade-strategies", "portfolio-correlation"], ["00-Daily--2026-06-27", "INDEX"], ["00-Daily--2026-06-29", "Jamal-Trading-Vault"], ["contabo-vps-stack", "jillu-ceo-hub"], ["trading-knowledge-base", "trend-following-strategies"], ["backtesting-methodology", "trading-plan-template"], ["risk-management-framework", "trading-knowledge-base"], ["00-Daily--2026-07-02", "trading-knowledge-base"], ["_COMMUNITY_Community 30", "Total_Plan_2026-06-27"], ["contabo-vps-stack", "VPS_SSH_Verified_2026-06-27"], ["brain-central-graph", "health"], ["INDEX", "jillu-ceo-hub"], ["trading-books-canon", "trading-knowledge-base"], ["indicator-moving-averages", "multi-timeframe-analysis"], ["algo-trading-architecture", "portfolio-correlation"], ["agent-company-ceo", "work-with-agent-team"], ["trading-knowledge-base", "tradingview-mcp"], ["position-sizing-money-management", "trading-system-stack-map"], ["00-Daily--2026-06-29", "INDEX"], ["_session-hub-c-users-junait-mt5-bot", "INDEX"], ["backtesting-methodology", "risk-management-framework"], ["execution-and-slippage", "indicator-atr"], ["40-Automation--Brain-Integration-Setup-2026-06-27", "trading-knowledge-base"], ["mt5-on-linux-wine-recipe", "trading-knowledge-base"], ["_COMMUNITY_Community 31", "Total_Plan_2026-06-27"], ["_COMMUNITY_Community 13", "Total_Plan_2026-06-27"], ["multi-timeframe-analysis", "trading-knowledge-base"], ["Auto-Save_Controller", "health"], ["48f2ef1a__2026-06-22", "contabo-vps-stack"], ["contabo-vps-stack", "saas-INDEX"], ["551c0b55__2026-06-26", "contabo-vps-stack"], ["00-Daily--2026-07-01", "trading-knowledge-base"], ["health", "notebooklm-INDEX"], ["contabo-vps-stack", "Jamal-Trading-Vault"], ["fibonacci-confluence", "wyckoff-method"], ["contabo-vps-stack", "saas-database-postgres"], ["performance-metrics", "trading-system-stack-map"], ["backtesting-methodology", "mt5-strategy-blueprint"], ["INDEX", "saas-INDEX"], ["smart-money-concepts", "support-resistance-supply-demand"], ["INDEX", "Jamal-Trading-Vault"], ["trading-books-canon", "trading-psychology"], ["_COMMUNITY_Community 4", "Total_Plan_2026-06-27"], ["jillu-skills-inventory", "mt5-on-linux-wine-recipe"], ["_COMMUNITY_Community 2", "GRAPH_REPORT"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "statistical-arbitrage-pairs-trading"], ["_session-hub-d-bd-shopify", "INDEX"], ["jillu-supabase-junno-stack-2026-06-28", "README"], ["Second_Brain_SOP_2026-06-27", "Total_Plan_2026-06-27"], ["2016a90b__2026-06-11", "contabo-vps-stack"], ["6c3cb30a__2026-06-01", "mt5-on-linux-wine-recipe"], ["_COMMUNITY_Community 14", "GRAPH_REPORT"], ["jillu-ceo-hub", "mt5-on-linux-wine-recipe"], ["74704196__2026-06-14", "agent-company-ceo"], ["fibonacci-confluence", "swing-trading-strategies"], ["trading-knowledge-base", "trend-and-market-regimes"], ["_COMMUNITY_Community 29", "Second_Brain_SOP_2026-06-27"], ["hermes-agents", "INDEX"], ["_COMMUNITY_Community 21", "GRAPH_REPORT"], ["jillu-omniroute-deploy-2026-06-30", "jillu-urgent-container-issues-2026-06-28"], ["140b1274__2026-06-22", "Jamal-Trading-Vault"], ["statistical-arbitrage-pairs-trading", "trading-books-canon"], ["_COMMUNITY_Community 19", "GRAPH_REPORT"], ["jillu-monitoring-stack-2026-06-28", "jillu-urgent-container-issues-2026-06-28"], ["position-sizing-money-management", "trend-following-strategies"], ["performance-metrics", "strategy-alpha-design"], ["05156695__2026-06-04", "mt5-on-linux-wine-recipe"], ["carry-trade-strategies", "trading-knowledge-base"], ["INDEX", "tradingview-mcp"], ["ff8ad8ab__2026-06-04", "mt5-on-linux-wine-recipe"], ["ed756eb2__2026-06-10", "hermes-local-telegram"], ["_COMMUNITY_Community 5", "GRAPH_REPORT"], ["backtesting-methodology", "trading-system-stack-map"], ["brain-central-graph", "notebooklm-INDEX"], ["backtesting-methodology", "overfitting-robustness"], ["MIGRATION_LOG_2026-06-27", "Second_Brain_SOP_2026-06-27"], ["contabo-vps-stack", "hermes-agents"], ["_session-hub-d-c-offload-mt5-bot", "trading-knowledge-base"], ["_COMMUNITY_Community 31", "Auto-Save_Controller"], ["saas-factory-pipeline", "trading-knowledge-base"], ["overfitting-robustness", "strategy-alpha-design"], ["chart-patterns", "trading-system-stack-map"], ["78a8d9ef__2026-06-03", "mt5-on-linux-wine-recipe"], ["health", "trading-knowledge-base"], ["saas-fundraising-growth-stages", "saas-INDEX"], ["_COMMUNITY_Community 23", "Second_Brain_SOP_2026-06-27"], ["6bf584c6__2026-06-02", "mt5-on-linux-wine-recipe"], ["candlestick-patterns", "swing-trading-strategies"], ["_COMMUNITY_Community 10", "Second_Brain_SOP_2026-06-27"], ["mt5-python-api", "multi-timeframe-analysis"], ["candlestick-patterns", "trading-system-stack-map"], ["8279fae6__2026-06-03", "mt5-on-linux-wine-recipe"], ["trading-psychology", "trading-system-stack-map"], ["_COMMUNITY_Community 12", "Second_Brain_SOP_2026-06-27"], ["indicator-moving-averages", "trading-knowledge-base"], ["56e6ec0d__2026-06-08", "_session-hub-d-c-offload-mt5-bot"], ["_COMMUNITY_Community 3", "GRAPH_REPORT"], ["market-profile", "support-resistance-supply-demand"], ["contabo-vps-stack", "jillu-cobalt-2026-06-28"], ["common-trading-mistakes", "trading-knowledge-base"], ["jillu-ceo-hub", "jillu-urgent-container-issues-2026-06-28"], ["_COMMUNITY_Community 4", "Auto-Save_Controller"], ["backtesting-methodology", "Jamal-Trading-Vault"], ["_session-hub-c-users-junait-mt5-bot", "a08cf56f__2026-06-03"], ["_COMMUNITY_Community 41", "GRAPH_REPORT"], ["jillu-ceo-hub", "jillu-mt5-bridges-and-services-2026-06-28"], ["contabo-vps-stack", "mt5-on-linux-wine-recipe"], ["_COMMUNITY_Community 38", "GRAPH_REPORT"], ["_COMMUNITY_Community 23", "MIGRATION_LOG_2026-06-27"], ["_session-hub-c-users-junait", "b8479a3b__2026-06-03"], ["strategy-alpha-design", "trend-following-strategies"], ["risk-management-framework", "trading-books-canon"], ["hostinger-vps", "INDEX"], ["b524c4ea__2026-06-05", "contabo-vps-stack"], ["brain-central-graph", "OBSIDIAN_SETUP_CONSOLIDATED"], ["6c0ce0d9__2026-06-14", "_session-hub-c-users-junait-video-agency"], ["jillu-ceo-hub", "jillu-mission-control-2026-06-28"], ["backtesting-methodology", "trend-following-strategies"], ["market-profile", "smart-money-concepts"], ["portfolio-correlation", "trading-books-canon"], ["INDEX", "mt5-on-linux-wine-recipe"], ["jillu-cobalt-2026-06-28", "README"], ["MT5_Accounts_Discovered_2026-06-27", "risk-management-framework"], ["00-Daily--2026-07-02", "README"], ["saas-INDEX", "trading-knowledge-base"], ["hermes-agents", "README"], ["_COMMUNITY_Community 15", "GRAPH_REPORT"], ["contabo-vps-stack", "jillu-whatsapp-flow-global-theme-2026-06-30"], ["hermes-local-telegram", "INDEX"], ["performance-metrics", "position-sizing-money-management"], ["trading-system-stack-map", "tradingview-mcp"], ["common-trading-mistakes", "trading-psychology"], ["_session-hub-d-c-offload-mt5-bot", "INDEX"], ["trading-knowledge-base", "wyckoff-method"], ["backtesting-methodology", "performance-metrics"], ["jillu-skills-inventory", "trading-knowledge-base"], ["health", "INDEX"], ["_AXIS-MOC", "INDEX"], ["jillu-mt5-bridges-and-services-2026-06-28", "mt5-on-linux-wine-recipe"], ["INDEX", "saas-factory"], ["40-Automation--Brain-Integration-Setup-2026-06-27", "README"], ["_COMMUNITY_Community 27", "Second_Brain_SOP_2026-06-27"], ["chart-patterns", "support-resistance-supply-demand"], ["market-profile", "trend-and-market-regimes"], ["00-Daily--2026-07-01", "README"], ["mt5-strategy-blueprint", "trading-knowledge-base"], ["jillu-ceo-hub", "trading-knowledge-base"], ["a08cf56f__2026-06-03", "mt5-on-linux-wine-recipe"], ["backtesting-methodology", "execution-and-slippage"], ["_COMMUNITY_Community 17", "GRAPH_REPORT"], ["risk-management-framework", "trading-plan-template"], ["9affa241__2026-06-08", "_session-hub-c-users-junait-mt5-bot"], ["market-profile", "trading-books-canon"], ["support-resistance-supply-demand", "trend-and-market-regimes"], ["candlestick-patterns", "support-resistance-supply-demand"], ["00-Daily--2026-06-27", "trading-knowledge-base"], ["support-resistance-supply-demand", "trading-books-canon"], ["INDEX", "notebooklm-INDEX"], ["smart-money-concepts", "wyckoff-method"], ["contabo-vps-stack", "jillu-urgent-container-issues-2026-06-28"], ["strategy-alpha-design", "trend-and-market-regimes"], ["_session-hub-c-users-junait", "INDEX"], ["backtesting-methodology", "position-sizing-money-management"], ["contabo-vps-stack", "jillu-mt5-bridges-and-services-2026-06-28"], ["portfolio-correlation", "risk-management-framework"], ["cb73eda6__2026-06-04", "contabo-vps-stack"], ["agent-company-ceo", "jillu-ceo-hub"], ["forex-market-mechanics", "position-sizing-money-management"], ["00-Daily--2026-06-29", "trading-knowledge-base"], ["performance-metrics", "portfolio-correlation"], ["8a465a42__2026-06-05", "mt5-on-linux-wine-recipe"], ["mt5-python-api", "trading-knowledge-base"], ["contabo-vps-stack", "tommy-mt5-system"], ["MT5_Accounts_Discovered_2026-06-27", "trading-system-stack-map"], ["contabo-vps-stack", "jillu-mission-control-2026-06-28"], ["chart-patterns", "trend-and-market-regimes"], ["indicator-atr", "indicator-bollinger-volatility"], ["brain-central-graph", "INDEX"], ["saas-INDEX", "work-with-agent-team"], ["40-Automation--Brain-Integration-Setup-2026-06-27", "brain-central-graph"], ["_COMMUNITY_Community 14", "Total_Plan_2026-06-27"], ["trading-knowledge-base", "trading-psychology"], ["automation-infra-mapping", "mt5-on-linux-wine-recipe"], ["MT5_Accounts_Discovered_2026-06-27", "VPS_SSH_Verified_2026-06-27"], ["00-Daily--2026-06-27", "backtesting-methodology"], ["Auto-Save_Controller", "INDEX"], ["_COMMUNITY_Community 25", "Total_Plan_2026-06-27"], ["484af910__2026-06-04", "contabo-vps-stack"], ["jillu-whatsapp-flow-global-theme-2026-06-30", "README"], ["agent-company-ceo", "d36de3d7__2026-06-11"], ["contabo-vps-stack", "trading-knowledge-base"], ["_AXIS-MOC", "README"], ["chart-patterns", "multi-timeframe-analysis"], ["jillu-ceo-hub", "jillu-monitoring-stack-2026-06-28"], ["_COMMUNITY_Community 21", "VPS_SSH_Verified_2026-06-27"], ["INDEX", "trading-knowledge-base"], ["risk-management-framework", "trading-system-stack-map"], ["position-sizing-money-management", "swing-trading-strategies"], ["candlestick-patterns", "multi-timeframe-analysis"], ["jillu-omniroute-deploy-2026-06-30", "README"], ["portfolio-correlation", "trading-system-stack-map"], ["jillu-monitoring-stack-2026-06-28", "README"], ["market-profile", "wyckoff-method"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "trading-knowledge-base"], ["execution-and-slippage", "statistical-arbitrage-pairs-trading"], ["execution-and-slippage", "strategy-alpha-design"], ["Jamal-Trading-Vault", "MT5_Accounts_Discovered_2026-06-27"], ["_session-hub-c-users-junait-mt5-bot", "cb73eda6__2026-06-04"], ["mt5-on-linux-wine-recipe", "trading-system-stack-map"], ["support-resistance-supply-demand", "wyckoff-method"], ["jillu-mission-control-2026-06-28", "README"], ["_COMMUNITY_Community 3", "Total_Plan_2026-06-27"], ["_session-hub-c-users-junait-mt5-bot", "ff8ad8ab__2026-06-04"], ["48f2ef1a__2026-06-22", "Jamal-Trading-Vault"], ["performance-metrics", "trading-knowledge-base"], ["776e2790__2026-06-03", "_session-hub-c-users-junait-mt5-bot"], ["agent-company-ceo", "health"], ["support-resistance-supply-demand", "swing-trading-strategies"], ["c105ffc3__2026-06-11", "contabo-vps-stack"], ["_COMMUNITY_Community 14", "Auto-Save_Controller"], ["contabo-vps-stack", "INDEX"], ["jillu-skills-inventory", "README"], ["automation-infra-mapping", "mt5-python-api"], ["support-resistance-supply-demand", "trading-system-stack-map"], ["56e6ec0d__2026-06-08", "contabo-vps-stack"], ["78f56c0a__2026-06-02", "_session-hub-c-users-junait-mt5-bot"], ["overfitting-robustness", "trading-knowledge-base"], ["_COMMUNITY_Community 25", "Auto-Save_Controller"], ["algo-trading-architecture", "mt5-python-api"], ["statistical-arbitrage-pairs-trading", "trend-and-market-regimes"], ["jillu-ceo-hub", "README"], ["indicator-atr", "trading-knowledge-base"], ["_session-hub-c-users-junait-mt5-bot", "health"], ["contabo-vps-stack", "f6d217c5__2026-06-17"], ["40-Automation--Brain-Integration-Setup-2026-06-27", "Jamal-Trading-Vault"], ["risk-management-framework", "trend-following-strategies"], ["fibonacci-confluence", "trading-knowledge-base"], ["_COMMUNITY_Community 25", "Second_Brain_SOP_2026-06-27"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "backtesting-methodology"], ["contabo-vps-stack", "jillu-monitoring-stack-2026-06-28"], ["_COMMUNITY_Community 29", "GRAPH_REPORT"], ["hostinger-vps", "trading-knowledge-base"], ["00-Daily--2026-06-27", "README"], ["performance-metrics", "trading-psychology"], ["_COMMUNITY_Community 30", "Auto-Save_Controller"], ["_COMMUNITY_Community 27", "Local_Tools_Bridge_2026-06-27"], ["_session-hub-c-users-junait-whatsapp-flow-main", "INDEX"], ["Jamal-Trading-Vault", "risk-management-framework"], ["_COMMUNITY_Community 30", "Second_Brain_SOP_2026-06-27"], ["484af910__2026-06-04", "_session-hub-c-users-junait-mt5-bot"], ["automation-infra-mapping", "trading-knowledge-base"], ["contabo-vps-stack", "hermes-local-telegram"], ["chart-patterns", "swing-trading-strategies"], ["overfitting-robustness", "statistical-arbitrage-pairs-trading"], ["_COMMUNITY_Community 13", "Auto-Save_Controller"], ["_session-hub-c-users-junait-claude-code-passive-project-youtube-automation", "INDEX"], ["_session-hub-d-bd-shopify", "health"], ["multi-timeframe-analysis", "support-resistance-supply-demand"], ["00-Daily--2026-06-29", "README"], ["algo-trading-architecture", "trading-knowledge-base"], ["12a7891a__2026-06-11", "_session-hub-c-users-junait-whatsapp-flow-main"], ["_COMMUNITY_Community 31", "Second_Brain_SOP_2026-06-27"], ["_COMMUNITY_Community 13", "Second_Brain_SOP_2026-06-27"], ["execution-and-slippage", "market-profile"], ["saas-database-postgres", "saas-INDEX"], ["Jamal-Trading-Vault", "mt5-strategy-blueprint"], ["indicator-bollinger-volatility", "indicator-moving-averages"], ["_COMMUNITY_Community 23", "GRAPH_REPORT"], ["candlestick-patterns", "trading-knowledge-base"], ["00-Daily--2026-07-02", "hermes-agents"], ["_COMMUNITY_Community 10", "GRAPH_REPORT"], ["140b1274__2026-06-22", "_session-hub-d-c-offload-mt5-bot"], ["backtesting-methodology", "statistical-arbitrage-pairs-trading"], ["backtesting-methodology", "strategy-alpha-design"], ["_COMMUNITY_Community 12", "GRAPH_REPORT"], ["automation-infra-mapping", "contabo-vps-stack"], ["00-Daily--2026-06-27", "risk-management-framework"], ["multi-timeframe-analysis", "smart-money-concepts"], ["agent-company-ceo", "saas-tech-stack-boilerplates"], ["backtesting-methodology", "common-trading-mistakes"], ["_COMMUNITY_Community 4", "Second_Brain_SOP_2026-06-27"], ["40-Automation--Brain-Integration-Setup-2026-06-27", "hermes-agents"], ["20-Areas--Agent----RAFSAN-(Creative)", "README"], ["portfolio-correlation", "position-sizing-money-management"], ["common-trading-mistakes", "overfitting-robustness"], ["saas-factory-pipeline", "saas-INDEX"], ["00-Daily--2026-07-01", "hermes-agents"], ["trading-plan-template", "trading-psychology"], ["00-Daily--2026-06-27", "mt5-strategy-blueprint"], ["agent-company-ceo", "brain-central-graph"], ["chart-patterns", "fibonacci-confluence"], ["multi-timeframe-analysis", "trend-and-market-regimes"], ["Jamal-Trading-Vault", "trading-system-stack-map"], ["agent-company-ceo", "d2d55d35__2026-06-25"], ["INDEX", "README"], ["mt5-on-linux-wine-recipe", "MT5_Accounts_Discovered_2026-06-27"], ["algo-trading-architecture", "backtesting-methodology"], ["brain-central-graph", "Total_Plan_2026-06-27"], ["10-Projects--Idea----Content-Repurposing-Engine", "20-Areas--Agent----RAFSAN-(Creative)"], ["brain-central-graph", "trading-knowledge-base"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "README"], ["agent-company-ceo", "d1741f43__2026-06-26"], ["jillu-brain-setup-2026-06-28", "trading-knowledge-base"], ["INDEX", "project-template"], ["9a6b8c42__2026-06-22", "agent-company-ceo"], ["jillu-mt5-bridges-and-services-2026-06-28", "README"], ["_session-hub-c-users-junait-mt5-bot", "mt5-strategy-blueprint"], ["trend-and-market-regimes", "trend-following-strategies"], ["health", "hostinger-vps"], ["30-Resources--runbooks--cloudflare-quick-tunnel", "README"], ["hermes-agents", "jillu-brain-setup-2026-06-28"], ["_COMMUNITY_Community 27", "GRAPH_REPORT"], ["chart-patterns", "tradingview-mcp"], ["health", "Second_Brain_SOP_2026-06-27"], ["trading-books-canon", "trading-plan-template"], ["_session-hub-c-users-junait", "ed756eb2__2026-06-10"], ["jillu-siam-elegance-2026-06-28", "README"], ["multi-timeframe-analysis", "trading-plan-template"], ["overfitting-robustness", "trading-books-canon"], ["f6d217c5__2026-06-17", "Jamal-Trading-Vault"], ["carry-trade-strategies", "position-sizing-money-management"], ["indicator-bollinger-volatility", "trend-and-market-regimes"], ["execution-and-slippage", "mt5-python-api"], ["carry-trade-strategies", "trend-and-market-regimes"], ["brain-central-graph", "saas-factory-pipeline"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "risk-management-framework"], ["MT5_Accounts_Discovered_2026-06-27", "trading-knowledge-base"], ["_COMMUNITY_Community 2", "Total_Plan_2026-06-27"], ["05156695__2026-06-04", "contabo-vps-stack"], ["saas-factory", "saas-factory-pipeline"], ["c6ec8078__2026-06-22", "contabo-vps-stack"], ["smart-money-concepts", "trading-knowledge-base"], ["INDEX", "tommy-mt5-system"], ["fe696c4d__2026-06-03", "mt5-on-linux-wine-recipe"], ["Jamal-Trading-Vault", "tradingview-mcp"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "mt5-strategy-blueprint"], ["agent-company-ceo", "saas-INDEX"], ["algo-trading-architecture", "trading-books-canon"], ["brain-central-graph", "work-with-agent-team"], ["brain-central-graph", "Second_Brain_SOP_2026-06-27"], ["10-Projects--Idea----Content-Repurposing-Engine", "_AXIS-MOC"], ["execution-and-slippage", "trading-knowledge-base"], ["_COMMUNITY_Community 21", "Total_Plan_2026-06-27"], ["d2d55d35__2026-06-25", "hermes-local-telegram"], ["_COMMUNITY_Community 19", "Total_Plan_2026-06-27"], ["_COMMUNITY_Community 29", "Total_Plan_2026-06-27"], ["_session-hub-c-users-junait", "health"], ["multi-timeframe-analysis", "wyckoff-method"], ["algo-trading-architecture", "automation-infra-mapping"], ["Auto-Save_Controller", "Second_Brain_SOP_2026-06-27"], ["_COMMUNITY_Community 5", "Total_Plan_2026-06-27"], ["risk-management-framework", "swing-trading-strategies"], ["8279fae6__2026-06-03", "contabo-vps-stack"], ["common-trading-mistakes", "trading-books-canon"], ["_session-hub-c-users-junait-mt5-bot", "Jamal-Trading-Vault"], ["indicator-atr", "risk-management-framework"], ["30-Resources--lessons--http-server-detachment-pitfall", "_AXIS-MOC"], ["agent-company-ceo", "INDEX"], ["d36de3d7__2026-06-11", "hermes-local-telegram"], ["00-Daily--2026-06-27", "performance-metrics"], ["market-profile", "mt5-python-api"], ["brain-central-graph", "MIGRATION_LOG_2026-06-27"], ["hermes-agents", "jillu-ceo-hub"], ["carry-trade-strategies", "risk-management-framework"], ["position-sizing-money-management", "trading-knowledge-base"], ["portfolio-correlation", "trading-knowledge-base"], ["multi-timeframe-analysis", "swing-trading-strategies"], ["04a37665__2026-06-08", "contabo-vps-stack"], ["9a6b8c42__2026-06-22", "_session-hub-d-bd-shopify"], ["saas-factory-pipeline", "saas-tech-stack-boilerplates"], ["_COMMUNITY_Community 23", "Total_Plan_2026-06-27"], ["automation-infra-mapping", "risk-management-framework"], ["00-Daily--2026-06-27", "smart-money-concepts"], ["00-Daily--2026-06-27", "hermes-jamal-memory"], ["10-Research--Scalping-20-Strategy-Spec-2026-06-27", "overfitting-robustness"], ["_COMMUNITY_Community 10", "Total_Plan_2026-06-27"], ["30-Resources--lessons--subagent-fallback-chain", "_AXIS-MOC"], ["Jamal-Trading-Vault", "mt5-on-linux-wine-recipe"], ["algo-trading-architecture", "risk-management-framework"], ["MT5_Accounts_Discovered_2026-06-27", "Second_Brain_SOP_2026-06-27"], ["_COMMUNITY_Community 12", "Total_Plan_2026-06-27"], ["mt5-strategy-blueprint", "position-sizing-money-management"], ["mt5-on-linux-wine-recipe", "VPS_SSH_Verified_2026-06-27"]], "stats": {"notes": 1256, "edges": 2851, "shown": 240}};
+let brainInit=false;
+function initBrain(){
+  if(brainInit) return; brainInit=true;
+  (function(){
+  const cv = document.getElementById('brainGraph'); if(!cv) return;
+  const ctx = cv.getContext('2d');
+  function size(){ cv.width = cv.clientWidth * devicePixelRatio; cv.height = 430 * devicePixelRatio; }
+  size();
+  const W = () => cv.width, H = () => cv.height;
+  const nodes = GDATA.nodes.map((n,i)=>({ ...n, x: Math.random(), y: Math.random(), vx:0, vy:0 }));
+  const idx = {}; nodes.forEach((n,i)=>idx[n.id]=i);
+  const edges = GDATA.edges.filter(e=>idx[e[0]]!==undefined && idx[e[1]]!==undefined).map(e=>[idx[e[0]], idx[e[1]]]);
+  const folderColor = { notes:'#c9a227', legacy:'#8a97a5', '(root)':'#222222', raw:'#b3372f', scripts:'#7a7565' };
+  for(let it=0; it<160; it++){
+    for(let i=0;i<nodes.length;i++){ const a=nodes[i];
+      for(let j=i+1;j<nodes.length;j++){ const b=nodes[j];
+        let dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy+0.0004, d=Math.sqrt(d2), f=0.0016/d2;
+        a.vx+=dx*d*f; a.vy+=dy*d*f; b.vx-=dx*d*f; b.vy-=dy*d*f; } }
+    edges.forEach(e=>{ const a=nodes[e[0]], b=nodes[e[1]];
+      let dx=b.x-a.x, dy=b.y-a.y, d=Math.sqrt(dx*dx+dy*dy)+0.001, f=(d-0.16)*0.02;
+      a.vx+=dx*f; a.vy+=dy*f; b.vx-=dx*f; b.vy-=dy*f; });
+    nodes.forEach(n=>{ n.vx+=(0.5-n.x)*0.004; n.vy+=(0.5-n.y)*0.004;
+      n.x+=Math.max(-0.02,Math.min(0.02,n.vx)); n.y+=Math.max(-0.02,Math.min(0.02,n.vy));
+      n.vx*=0.82; n.vy*=0.82; });
+  }
+  let hover=null;
+  function draw(){
+    ctx.clearRect(0,0,W(),H());
+    ctx.strokeStyle='rgba(160,145,80,.28)'; ctx.lineWidth=1;
+    edges.forEach(e=>{ const a=nodes[e[0]], b=nodes[e[1]];
+      ctx.beginPath(); ctx.moveTo(a.x*W(),a.y*H()); ctx.lineTo(b.x*W(),b.y*H()); ctx.stroke(); });
+    nodes.forEach(n=>{ const r=(2.2+Math.min(15, n.d*0.11))*devicePixelRatio;
+      ctx.beginPath(); ctx.arc(n.x*W(), n.y*H(), r, 0, 7);
+      ctx.fillStyle = (hover===n) ? '#f5c93f' : (folderColor[n.f]||'#999'); ctx.fill();
+      if(n.d>=40){ ctx.fillStyle='#33301f'; ctx.font=`${10*devicePixelRatio}px Noto Serif Bengali`;
+        ctx.fillText(n.id, n.x*W()+r+3, n.y*H()+3); } });
+    if(hover){ ctx.fillStyle='#191919'; ctx.font=`bold ${13*devicePixelRatio}px Noto Serif Bengali`;
+      ctx.fillText(hover.id+' · '+hover.d+' links', 14*devicePixelRatio, 22*devicePixelRatio); }
+  }
+  draw();
+  cv.addEventListener('mousemove', ev=>{ const r=cv.getBoundingClientRect();
+    const mx=(ev.clientX-r.left)*devicePixelRatio, my=(ev.clientY-r.top)*devicePixelRatio;
+    hover=null; let best=18*devicePixelRatio;
+    nodes.forEach(n=>{ const d=Math.hypot(n.x*W()-mx, n.y*H()-my); if(d<best){best=d;hover=n;} });
+    draw(); });
+})();
+}
+</script>
+<script>
+/* hub list + deep-link start page */
+(function(){
+  if(typeof GDATA!=='undefined'){
+    const hubs=[...GDATA.nodes].sort((a,b)=>b.d-a.d).slice(0,12);
+    document.getElementById('hubList').innerHTML = hubs.map(n=>`<li><span>${n.id}</span><span class="tag">${n.d} links</span></li>`).join('');
+  }
+  const h=(location.hash||'').replace('#','');
+  const pages=['dashboard','agents','team','chat','projects','plans','activity','handovers','connect','brain'];
+  if(pages.includes(h)) showPage(h);
+})();
+</script>
+<script>
+
+/* ==================== P2 CORE WIRING ====================
+   Connects this page to the live Agentic OS Core (VPS):
+   REST https://os.ecomex.cloud · WebSocket wss://os.ecomex.cloud/ws
+   If the core is unreachable, everything falls back to the embedded
+   data + simulated behaviour above — the page never breaks. */
+const CORE = {
+  base: 'https://os.ecomex.cloud',
+  wsUrl: 'wss://os.ecomex.cloud/ws',
+  key: 'YOUR_AGENTIC_API_KEY',
+  live: false,
+  state: null,
+};
+const CORE2UI_ID = { 'claude-code': 'claudecode' };
+const UI2CORE_ID = { 'claudecode': 'claude-code' };
+const NAME2CORE_ID = { 'Muse': 'Muse', 'Claude Code': 'claude-code', 'Hermes Agent': 'hermes', 'Dot Agent': 'dot' };
+const CORE_ID_NAME = { 'Muse': 'Muse', 'claude-code': 'Claude Code', 'hermes': 'Hermes Agent', 'dot': 'Dot Agent' };
+const PROJ_ORDER = ['solixoo', 'iip', 'agentic-os'];
+
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function trunc(s, n){ s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+function fmtNum(n){ return Number(n || 0).toLocaleString('en-US'); }
+function coreIdToUi(id){ return CORE2UI_ID[id] || id; }
+function uiIdToCore(id){ return UI2CORE_ID[id] || id; }
+function agentNameByCoreId(id, st){
+  const a = ((st && st.agents) || []).find(x => x.id === id);
+  return a ? a.name : (CORE_ID_NAME[id] || id);
+}
+function relTime(ts){
+  const t = new Date(ts).getTime();
+  if (isNaN(t)) return '';
+  const s = Math.max(0, (Date.now() - t) / 1000);
+  if (s < 90) return 'just now';
+  if (s < 3600) return Math.round(s / 60) + 'm';
+  if (s < 86400) return Math.round(s / 3600) + 'h';
+  return Math.round(s / 86400) + 'd';
+}
+function computeStrip(tasks){
+  const total = (tasks || []).length || 1;
+  const run = tasks.filter(t => t.status === 'running').length;
+  const done = tasks.filter(t => t.status === 'done').length;
+  const pct = n => Math.round(n / total * 100);
+  return { run: pct(run), done: pct(done), queue: pct(total - run - done) };
+}
+function mapHandovers(st){
+  return (st.handovers || []).map(h => ({
+    id: h.id,
+    title: h.title,
+    from: agentNameByCoreId(h.from_agent, st),
+    to: agentNameByCoreId(h.to_agent, st),
+    note: h.note || '',
+    state: h.status,
+  }));
+}
+function eventToFeed(ev, st){
+  const name = agentNameByCoreId(ev.agent_id, st);
+  let p = ev.payload || {};
+  if (typeof p === 'string'){ try { p = JSON.parse(p); } catch (e) { p = {}; } }
+  const title = esc(p.taskTitle || p.title || '');
+  let icon = '📌', text = '';
+  if (ev.type === 'chat.message'){ icon = '💬'; text = `<b>${esc(name)}</b> chat: “${esc(p.message || '')}”`; }
+  else if (ev.type === 'chat.reply'){ icon = '💬'; text = `<b>${esc(name)}</b> replied: “${esc(trunc(p.reply || '', 150))}”`; }
+  else if (ev.type === 'task.started'){ icon = '🛠'; text = `<b>${esc(name)}</b> started task “${title}”`; }
+  else if (ev.type === 'task.progress'){ icon = '📈'; text = `<b>${esc(name)}</b> progress on “${title}”${p.progress != null ? ' — ' + p.progress + '%' : ''}`; }
+  else if (ev.type === 'task.done'){ icon = '✅'; text = `<b>${esc(name)}</b> completed “${title}”`; }
+  else if (ev.type === 'task.blocked'){ icon = '⛔'; text = `<b>${esc(name)}</b> blocked on “${title}”${p.note ? ' — ' + esc(p.note) : ''}`; }
+  else if (ev.type === 'heartbeat'){ icon = '💓'; text = `<b>${esc(name)}</b> heartbeat — online`; }
+  else if (String(ev.type).indexOf('handover') === 0){ icon = '🤝'; text = `<b>${esc(name)}</b> handover update${p.title ? ' — “' + esc(p.title) + '”' : ''}`; }
+  else { text = `<b>${esc(name)}</b> ${esc(ev.type)}${p.note ? ' — ' + esc(p.note) : ''}`; }
+  return { icon, text, who: name, when: relTime(ev.ts || ev.created_at) };
+}
+
+/* ---------- live renderers (same markup as the embedded renders) ---------- */
+function renderAgentsLive(){
+  document.getElementById('agentCards').innerHTML = AGENTS.map(a => `
+  <div class="card agent-card">
+    <div class="agent-top">
+      <div class="agent-ava" style="background:${a.color}">${a.emoji}</div>
+      <div><div class="b" style="font-size:17px">${a.name}</div><div class="small muted b">${a.role}</div></div>
+      <span class="chip" style="margin-left:auto"><span class="st ${a.dot}"></span>${a.status}</span>
+    </div>
+    <div class="kv"><span class="muted b">Working on</span><b>${esc(a.task)}</b></div>
+    <div class="kv"><span class="muted b">Connected via</span><b>${esc(a.method)}</b></div>
+    <div><div style="display:flex;justify-content:space-between" class="small b"><span class="muted">Current task progress</span><span>${a.progress}%</span></div>
+    <div class="bar" style="margin-top:5px"><i style="width:${a.progress}%"></i></div></div>
+    <div class="card-actions">
+      <button class="btn black sm" onclick="openChat('${a.id}')">💬 Open chat</button>
+      <button class="btn yellow sm" onclick="giveTask('${a.name}')">📌 Give task (handover)</button>
+      <button class="btn ghost sm" onclick="showPage('team')">Team view</button>
+    </div>
+  </div>`).join('');
+}
+function renderTeamLive(){
+  const a0 = AGENTS[0];
+  document.getElementById('teamLiveList').innerHTML =
+    `<li><b>🤖 Muse</b> <span class="tag yellow">Orchestrator</span><div class="muted b" style="font-size:12px;margin-top:2px">Coordinating the team · ${esc(a0.task)}</div><div class="bar"><i style="width:${a0.progress}%"></i></div></li>` +
+    TEAM.map(t => `<li><b>${t.icon} ${t.name}</b> <span class="tag ${t.progress === 100 ? 'green' : ''}">${t.state}</span><div class="muted b" style="font-size:12px;margin-top:2px">${t.doing}</div><div class="bar"><i style="width:${t.progress}%"></i></div></li>`).join('') +
+    AGENTS.slice(1).map(a => `<li><b>${a.emoji} ${a.name}</b> <span class="tag">Peer</span><div class="muted b" style="font-size:12px;margin-top:2px">${esc(a.task)}</div><div class="bar"><i class="black" style="width:${a.progress}%"></i></div></li>`).join('');
+  const hero = document.querySelector('.tnode.hero .doing');
+  if (hero) hero.textContent = a0.task;
+  document.querySelectorAll('.tnode.peer').forEach(node => {
+    const nm = node.querySelector('.nm');
+    const doing = node.querySelector('.doing');
+    if (!nm || !doing) return;
+    const a = AGENTS.find(x => nm.textContent.indexOf(x.name) >= 0);
+    if (a) doing.textContent = a.task;
+  });
+}
+function renderDashboardLive(st){
+  const strip = computeStrip(st.tasks || []);
+  const seg = (id, v) => { const el = document.getElementById(id); if (el){ el.style.width = v + '%'; el.textContent = v + '%'; } };
+  seg('segRun', strip.run); seg('segDone', strip.done); seg('segQueue', strip.queue);
+  document.getElementById('outAgents').textContent = '🤖 ' + (st.agents || []).length;
+  document.getElementById('outTasks').textContent = '⚡ ' + (st.tasks || []).length;
+  document.getElementById('outProjects').textContent = '🗂 ' + (st.projects || []).length;
+  const main = (st.projects || []).find(p => p.id === 'solixoo') || (st.projects || [])[0];
+  if (main){
+    document.getElementById('dashMainPct').textContent = main.progress + '%';
+    document.getElementById('dashMainBar').style.width = main.progress + '%';
+  }
+  const iip = (st.projects || []).find(p => p.id === 'iip');
+  const aos = (st.projects || []).find(p => p.id === 'agentic-os');
+  if (iip) document.getElementById('dashTagIip').textContent = iip.name.split('—')[0].trim() + ' ' + iip.progress + '%';
+  if (aos) document.getElementById('dashTagOs').textContent = aos.name + ' ' + aos.progress + '%';
+  const hos = st.handovers || [];
+  const done = hos.filter(h => h.status === 'completed').length;
+  const pctDone = hos.length ? Math.round(done / hos.length * 100) : 0;
+  const pctSent = hos.length ? Math.round(hos.filter(h => h.status === 'sent').length / hos.length * 100) : 0;
+  const pctAcc = hos.length ? Math.round(hos.filter(h => h.status === 'accepted').length / hos.length * 100) : 0;
+  document.getElementById('dashHoPct').textContent = pctDone + '%';
+  const hs = document.getElementById('dashHoSent'); hs.style.width = pctSent + '%'; hs.textContent = 'Sent ' + pctSent + '%';
+  const ha = document.getElementById('dashHoAcc'); ha.style.width = pctAcc + '%'; ha.textContent = 'Accepted ' + pctAcc + '%';
+  document.getElementById('dashHoRest').style.width = Math.max(0, 100 - pctSent - pctAcc) + '%';
+  document.getElementById('dashHoText').textContent = `Ownership moves on accept — two agents never work the same task at once. ${done} of ${hos.length} handovers completed.`;
+  document.getElementById('dashAgentStrip').innerHTML = AGENTS.map(agentMini).join('');
+}
+function renderProjectsLive(st){
+  const projs = [...(st.projects || [])].sort((x, y) => PROJ_ORDER.indexOf(x.id) - PROJ_ORDER.indexOf(y.id));
+  const nameOf = id => { const p = projs.find(q => q.id === id); return p ? p.name : id; };
+  document.getElementById('projSub').textContent = `${projs.length} projects · ${(st.tasks || []).length} tasks on the board · progress rolls up from phases`;
+  document.getElementById('projCards').innerHTML = projs.map(p => {
+    const dark = p.id === 'agentic-os';
+    const kvStyle = dark ? ' style="border-color:#3a3a3a"' : '';
+    const lblStyle = dark ? ' style="color:#b9b294"' : '';
+    const lblCls = dark ? 'b' : 'muted b';
+    return `
+      <div class="card${dark ? ' dark' : ''}">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="b" style="font-size:16.5px">${esc(p.name)}</span><span class="tag${p.id === 'iip' ? '' : ' yellow'}">${esc(p.tag || '')}</span></div>
+        <div style="margin-top:10px"><span class="progress-num">${p.progress}%</span></div>
+        <div class="bar" style="margin-top:6px"><i style="width:${p.progress}%"></i></div>
+        <div class="kv"${kvStyle}><span class="${lblCls}"${lblStyle}>Status</span><b>${esc(p.status || '')}</b></div>
+        <div class="kv"${kvStyle}><span class="${lblCls}"${lblStyle}>Next</span><b>${esc(p.next_step || '')}</b></div>
+        <div class="kv"${kvStyle}><span class="${lblCls}"${lblStyle}>Owner</span><b>${esc(agentNameByCoreId(p.owner_agent, st))}</b></div>
+        <button class="btn ${dark ? 'yellow' : 'ghost'} sm" style="margin-top:11px" onclick="showPage('plans')">See plan →</button>
+      </div>`;
+  }).join('');
+  const tasks = st.tasks || [];
+  const cols = [
+    { key: 'done', head: '✅ Done', tag: 'tag green', list: tasks.filter(t => t.status === 'done') },
+    { key: 'running', head: '🛠 In progress', tag: 'tag yellow', list: tasks.filter(t => t.status === 'running') },
+    { key: 'queued', head: '⏳ Queued / blocked', tag: 'tag', list: tasks.filter(t => t.status === 'queued' || t.status === 'blocked') },
+  ];
+  document.getElementById('kanbanNote').textContent = `${tasks.length} tasks · live from the Core`;
+  document.getElementById('kanbanBoard').innerHTML = cols.map(c => `
+      <div class="kcol"><h3>${c.head} <span class="${c.tag}">${c.list.length}</span></h3>
+        ${c.list.map(t => `<div class="kcard"><div class="t">${esc(t.title)}</div><span class="muted b">${esc(nameOf(t.project_id))}${t.note ? ' · ' + esc(t.note) : ''}</span>${t.status === 'running' ? `<div class="bar" style="margin-top:7px"><i style="width:${t.progress}%"></i></div>` : ''}</div>`).join('')}
+      </div>`).join('');
+}
+function renderPlansLive(st){
+  const projs = [...(st.projects || [])].sort((x, y) => PROJ_ORDER.indexOf(x.id) - PROJ_ORDER.indexOf(y.id));
+  document.getElementById('planSub').textContent = `${(st.phases || []).length} phases across ${projs.length} projects · done / active / pending at a glance`;
+  document.getElementById('planCards').innerHTML = projs.map(p => {
+    const phases = (st.phases || []).filter(ph => ph.project_id === p.id).sort((a, b) => (a.position || 0) - (b.position || 0));
+    return `
+      <div class="card"><div class="b" style="font-size:16px">${esc(p.name)} — ${p.progress}%</div><div class="bar" style="margin:9px 0 16px"><i style="width:${p.progress}%"></i></div>
+        <div class="timeline">
+          ${phases.map(ph => `<div class="tl-item${ph.status === 'done' ? ' done' : ph.status === 'active' ? ' active' : ''}"><div class="t">${esc(ph.title)}</div><div class="d">${esc(ph.detail || '')}</div></div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+function renderConnectLive(st){
+  const byKey = {};
+  (st.connections || []).forEach(c => { byKey[c.agent_id + '|' + c.method] = c.status; });
+  let html = '<tr><th>Method</th>' + AGENTS.map(a => `<th>${a.name}</th>`).join('') + '</tr>';
+  CONNECT_METHODS.forEach(m => {
+    html += `<tr><td class="b">${m}</td>` + AGENTS.map(a => {
+      const s = byKey[uiIdToCore(a.id) + '|' + m] || '—';
+      const cls = s === 'Connected' ? 'ok' : (s === 'Available' || s === '—') ? 'man' : 'mid';
+      return `<td><span class="pill-status ${cls}">${s}</span></td>`;
+    }).join('') + '</tr>';
+  });
+  document.getElementById('connectMatrix').innerHTML = html;
+}
+function renderBrainLive(st){
+  if (st.brain){
+    const b = st.brain;
+    const set = (id, dot, txt) => { const el = document.getElementById(id); if (el) el.innerHTML = `<span class="st ${dot}"></span>${txt}`; };
+    set('dashBrainNotes', 'g', fmtNum(b.notes) + ' notes');
+    set('dashBrainLinks', 'g', fmtNum(b.edges) + ' links');
+    set('dashBrainOrphans', 'y', fmtNum(b.orphans) + ' orphans only');
+    set('brainNotes', 'g', fmtNum(b.notes) + ' notes');
+    set('brainLinks', 'g', fmtNum(b.edges) + ' links');
+    set('brainOrphans', 'y', fmtNum(b.orphans) + ' orphans only');
+  }
+  const nodes = st.knowledgeNodes || [];
+  if (nodes.length){
+    const hubs = [...nodes].sort((x, y) => (y.link_count != null ? y.link_count : (y.d || 0)) - (x.link_count != null ? x.link_count : (x.d || 0))).slice(0, 12);
+    document.getElementById('hubList').innerHTML = hubs.map(n => `<li><span>${esc(n.title || n.id)}</span><span class="tag">${n.link_count != null ? n.link_count : (n.d || 0)} links</span></li>`).join('');
+  }
+}
+function renderFeedLive(st){
+  const events = st.events || [];
+  if (!events.length){
+    const li = `<li><span style="font-size:16px">🔌</span><div>Core connected — no events yet<div class="muted b" style="font-size:11px">Agentic OS Core</div></div><span class="when"></span></li>`;
+    document.getElementById('dashFeed').innerHTML = li;
+    document.getElementById('fullFeed').innerHTML = li;
+    return;
+  }
+  const items = events.map(ev => eventToFeed(ev, st));
+  document.getElementById('dashFeed').innerHTML = feedHTML(items.slice(0, 5));
+  document.getElementById('fullFeed').innerHTML = feedHTML(items.slice(0, 40));
+}
+function renderHandoversLive(){
+  const done = HANDOVERS.filter(h => h.state === 'completed').length;
+  document.getElementById('hoCount').textContent = done + '/' + HANDOVERS.length;
+  document.getElementById('hoList').innerHTML = HANDOVERS.map(h => {
+    const idx = HO_STATES.indexOf(h.state);
+    const pipe = HO_STATES.map((s, i) => `<i class="${i <= idx ? 'on' : ''} ${h.state === 'completed' ? 'done' : ''}"></i>`).join('');
+    return `<div class="card" style="padding:16px 18px">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+        <div class="b" style="font-size:14.5px">${esc(h.title)}</div><span class="ho-state ${h.state}">${h.state}</span>
+      </div>
+      <div class="small muted b" style="margin-top:4px">${esc(h.from)} → ${esc(h.to)}</div>
+      <p class="small" style="color:var(--soft);font-weight:600;line-height:1.55;margin-top:6px">${esc(h.note)}</p>
+      <div class="ho-pipe">${pipe}</div>
+      ${h.id != null && h.state !== 'completed' ? `<button class="btn ghost sm" style="margin-top:10px" onclick="advanceHandover(${h.id})">Advance →</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+/* ---------- state application ---------- */
+function applyLiveState(st){
+  CORE.state = st;
+  (st.agents || []).forEach(ca => {
+    const a = AGENTS.find(x => x.id === coreIdToUi(ca.id));
+    if (!a) return;
+    a.name = ca.name || a.name;
+    a.status = ca.status || a.status;
+    a.role = ca.role || a.role;
+    a.task = ca.current_task || a.task;
+    a.method = ca.method || a.method;
+    if (ca.progress != null) a.progress = ca.progress;
+    a.dot = ca.status === 'Connected' ? 'g' : (ca.status === 'Manual path open' ? 'gr' : 'y');
+  });
+  HANDOVERS = mapHandovers(st);
+  renderDashboardLive(st);
+  renderAgentsLive();
+  renderTeamLive();
+  renderProjectsLive(st);
+  renderPlansLive(st);
+  renderConnectLive(st);
+  renderBrainLive(st);
+  renderFeedLive(st);
+  renderHandovers();
+  renderChatList();
+}
+
+/* ---------- connection state UI ---------- */
+function setBadge(mode){
+  const dot = document.getElementById('coreBadgeDot');
+  const txt = document.getElementById('coreBadgeText');
+  if (!dot || !txt) return;
+  if (mode === 'live'){ dot.className = 'st g'; txt.textContent = 'CORE LIVE'; }
+  else if (mode === 'offline'){ dot.className = 'st gr'; txt.textContent = 'CORE OFFLINE'; }
+  else { dot.className = 'st y'; txt.textContent = 'CORE …'; }
+}
+function setChatChip(live){
+  const dot = document.getElementById('chatModeDot');
+  const txt = document.getElementById('chatModeText');
+  if (!dot || !txt) return;
+  dot.className = 'st ' + (live ? 'g' : 'y');
+  txt.textContent = live ? 'Live — replies from the Agentic OS Core' : 'Demo replies — live agent link arrives with the P2 core';
+}
+function setLiveUI(){
+  setBadge('live');
+  const ld = document.getElementById('dashLiveDot'); if (ld) ld.className = 'st g';
+  const lt = document.getElementById('dashLiveText'); if (lt) lt.textContent = 'CORE LIVE';
+  const ft = document.getElementById('dashFeedTag'); if (ft) ft.textContent = 'CORE LIVE feed';
+  const at = document.getElementById('activityTag'); if (at) at.textContent = 'LIVE · CORE feed — real events from the Agentic OS Core';
+  setChatChip(true);
+}
+function setOfflineUI(){
+  setBadge('offline');
+  const lt = document.getElementById('dashLiveText'); if (lt) lt.textContent = 'LIVE · SIM';
+  const ft = document.getElementById('dashFeedTag'); if (ft) ft.textContent = 'LIVE · SIM feed';
+  const at = document.getElementById('activityTag'); if (at) at.textContent = 'LIVE · SIM feed — real event stream arrives with P2';
+  setChatChip(false);
+}
+function setLive(st){ CORE.live = true; applyLiveState(st); setLiveUI(); }
+function setOffline(){ CORE.live = false; setOfflineUI(); }
+
+/* ---------- REST ---------- */
+async function fetchState(){
+  const ctl = new AbortController();
+  const to = setTimeout(() => ctl.abort(), 6000);
+  try {
+    const r = await fetch(CORE.base + '/api/state', { signal: ctl.signal });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } finally { clearTimeout(to); }
+}
+async function refreshState(){
+  try { const st = await fetchState(); setLive(st); return true; }
+  catch (e) { return false; }
+}
+
+/* ---------- WebSocket (auto-reconnect with backoff) ---------- */
+let wsRetry = 0, wsTimer = null, refreshTimer = null;
+function scheduleRefresh(){
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(() => { refreshState(); }, 350);
+}
+function prependEvent(ev){
+  if (!CORE.state) return;
+  const list = (CORE.state.events || []).filter(e => e.id !== ev.id);
+  list.unshift(ev);
+  CORE.state.events = list;
+  renderFeedLive(CORE.state);
+}
+function scheduleWS(){
+  wsRetry = Math.min(wsRetry + 1, 6);
+  const delay = Math.min(1000 * Math.pow(2, wsRetry - 1), 15000);
+  clearTimeout(wsTimer);
+  wsTimer = setTimeout(connectWS, delay);
+}
+function connectWS(){
+  let ws;
+  try { ws = new WebSocket(CORE.wsUrl); } catch (e) { scheduleWS(); return; }
+  ws.onopen = () => { wsRetry = 0; };
+  ws.onmessage = m => {
+    let d; try { d = JSON.parse(m.data); } catch (e) { return; }
+    if (d.type === 'snapshot' && d.state) setLive(d.state);
+    else if (d.type === 'event' && d.event){ prependEvent(d.event); scheduleRefresh(); }
+    else if (d.type === 'state.patch'){ scheduleRefresh(); }
+  };
+  ws.onclose = () => {
+    if (CORE.live){ refreshState().then(ok => { if (!ok) setOffline(); }); }
+    scheduleWS();
+  };
+  ws.onerror = () => { try { ws.close(); } catch (e) {} };
+}
+
+/* ---------- overrides: handovers ---------- */
+const _origRenderHandovers = renderHandovers;
+renderHandovers = function(){
+  if (CORE.state) renderHandoversLive(); else _origRenderHandovers();
+};
+function localAdvance(h){
+  const from = h.state;
+  if (from === 'completed') return;
+  h.state = HO_STATES[HO_STATES.indexOf(from) + 1];
+  document.getElementById('hoMsg').textContent = `“${h.title}” moved ${from} → ${h.state}` + (h.state === 'completed' ? ' — ownership closed, task done.' : h.state === 'accepted' ? ` — ${h.to} now owns it.` : '');
+  renderHandovers();
+}
+async function advanceHandover(id){
+  const h = HANDOVERS.find(x => x.id === id);
+  if (!h) return;
+  if (!CORE.live){ localAdvance(h); return; }
+  const before = h.state;
+  const msg = document.getElementById('hoMsg');
+  try {
+    const r = await fetch(CORE.base + '/api/handovers/' + id + '/advance', { method: 'POST', headers: { 'x-api-key': CORE.key } });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    await refreshState();
+    const h2 = HANDOVERS.find(x => x.id === id);
+    msg.textContent = `“${h.title}” moved ${before} → ${h2 ? h2.state : '?'}` + (h2 && h2.state === 'completed' ? ' — ownership closed, task done.' : h2 && h2.state === 'accepted' ? ` — ${h2.to} now owns it.` : '');
+  } catch (e) {
+    msg.textContent = 'Core unreachable — advancing locally only.';
+    localAdvance(h);
+  }
+}
+function advanceNextHandover(){
+  const h = HANDOVERS.find(x => x.state !== 'completed');
+  const msg = document.getElementById('hoMsg');
+  if (!h){ msg.textContent = 'All handovers are completed 🎉'; return; }
+  if (h.id != null) advanceHandover(h.id); else localAdvance(h);
+}
+async function submitHandover(e){
+  e.preventDefault();
+  const title = document.getElementById('hoTitle').value.trim();
+  const toName = document.getElementById('hoAgent').value;
+  const note = document.getElementById('hoNote').value.trim();
+  if (!title || !note) return;
+  const msg = document.getElementById('hoMsg');
+  if (CORE.live){
+    try {
+      const r = await fetch(CORE.base + '/api/handovers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': CORE.key },
+        body: JSON.stringify({ title, toAgent: NAME2CORE_ID[toName] || toName, fromAgent: 'Muse', note }),
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      e.target.reset();
+      msg.textContent = `Handover created in the Core for ${toName} — state: pending.`;
+      await refreshState();
+      return;
+    } catch (err) { /* fall through to local create */ }
+  }
+  HANDOVERS.unshift({ title, from: 'Muse', to: toName, note, state: 'pending' });
+  msg.textContent = `New handover created for ${toName} — state: pending. Press “Advance next handover” to send it.`;
+  e.target.reset();
+  renderHandovers();
+}
+
+/* ---------- overrides: chat ---------- */
+const _origSendChat = sendChat;
+sendChat = function(text){
+  if (!CORE.live){ _origSendChat(text); return; }
+  const a = agentById(currentChat);
+  CHATS[currentChat].push({ from: 'me', text });
+  renderThread(); renderChatList();
+  const body = document.getElementById('chatBody');
+  const typing = document.createElement('div');
+  typing.className = 'msg agent typing';
+  typing.textContent = a.name + ' is typing…';
+  body.appendChild(typing); body.scrollTop = body.scrollHeight;
+  const finish = replyText => {
+    typing.remove();
+    CHATS[currentChat].push({ from: 'agent', text: replyText });
+    if (currentChat === a.id) renderThread();
+    renderChatList();
+  };
+  const coreId = uiIdToCore(currentChat);
+  fetch(CORE.base + '/api/chat/' + encodeURIComponent(coreId), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': CORE.key },
+    body: JSON.stringify({ message: text }),
+  })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(d => {
+      const rep = typeof d.reply === 'string' ? d.reply : (d.reply && (d.reply.text || d.reply.message)) || d.message || '';
+      if (!rep) throw new Error('empty reply');
+      finish(rep);
+    })
+    .catch(() => { setOffline(); finish(agentReply(a, text)); });
+};
+
+/* ---------- boot ---------- */
+(function bootCore(){
+  setBadge('connecting');
+  const hoBtn = document.getElementById('hoAdvance');
+  if (hoBtn && hoBtn.cloneNode){
+    const c = hoBtn.cloneNode(true);
+    hoBtn.replaceWith(c);
+    c.addEventListener('click', advanceNextHandover);
+  }
+  const hoFormEl = document.getElementById('hoForm');
+  if (hoFormEl && hoFormEl.cloneNode){
+    const f = hoFormEl.cloneNode(true);
+    hoFormEl.replaceWith(f);
+    f.addEventListener('submit', submitHandover);
+  }
+  refreshState().then(ok => {
+    connectWS();
+    if (!ok){ setTimeout(() => { if (!CORE.live) setOffline(); }, 4000); }
+  });
+})();
+
+/* exposed for testing / debugging */
+window.CORE_API = { CORE, computeStrip, mapHandovers, eventToFeed, applyLiveState, refreshState, advanceHandover, advanceNextHandover, submitHandover, setLive, setOffline };
+
+</script>
+</body>
+</html>
